@@ -1,5 +1,8 @@
 package main.blackjack;
 
-class JBlackJack {
-
+public class JBlackJack {
+    public static void main(String[] args)
+    {
+        // Inizializzazione gioco
+    }
 }
