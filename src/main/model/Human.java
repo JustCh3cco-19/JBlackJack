@@ -12,7 +12,7 @@ public class Human extends Player {
     }
 
     @Override
-    protected int decidiValoreAsso() {
+    public int decidiValoreAsso() {
         int valore = 0;
         while (valore != 1 && valore != 11) {
             System.out.println("Hai pescato un asso, vuoi farlo valere 1 o 11?");
@@ -23,7 +23,8 @@ public class Human extends Player {
 
     @Override
     public boolean devePescare() {
-        // Mostra il punteggio attuale e chiede al giocatore se vuole continuare a pescare
+        // Mostra il punteggio attuale e chiede al giocatore se vuole continuare a
+        // pescare
         System.out.println("Il tuo punteggio attuale è: " + calcolaPunteggio());
         System.out.println("Vuoi pescare un'altra carta? (s/n)");
 

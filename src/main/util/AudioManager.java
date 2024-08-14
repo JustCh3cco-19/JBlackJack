@@ -1,4 +1,5 @@
 package main.util;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,9 +15,11 @@ public class AudioManager {
 			instance = new AudioManager();
 		return instance;
 	}
+
 	private AudioManager() {
 
 	}
+
 	public void play(String filename) {
 		try {
 			InputStream in = new FileInputStream(filename);

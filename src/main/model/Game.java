@@ -2,6 +2,7 @@ package main.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class Game {
     private Human giocatore;
     private List<Bot> bots;
@@ -13,6 +14,11 @@ public class Game {
         this.bots = bots != null ? bots : new ArrayList<>();
         this.deck = new Deck();
         this.banco = new Banco();
+    }
+
+    // Metodo per ottenere il mazzo
+    public Deck getDeck() {
+        return deck;
     }
 
     // Metodo per iniziare il gioco
@@ -33,7 +39,6 @@ public class Game {
 
         // Stabilisci il vincitore della mano
         determinaVincitore();
-
     }
 
     // Metodo per configurare le mani iniziali dei giocatori
@@ -42,7 +47,7 @@ public class Game {
         giocatore.addCarta(deck.pescaCarta());
         giocatore.addCarta(deck.pescaCarta());
 
-        for(Bot bot : bots) {
+        for (Bot bot : bots) {
             bot.addCarta(deck.pescaCarta());
             bot.addCarta(deck.pescaCarta());
         }
@@ -52,7 +57,7 @@ public class Game {
     }
 
     private void managePlayerTurn(Player player) {
-        while(player.devePescare()) {
+        while (player.devePescare()) {
             player.addCarta(deck.pescaCarta());
             System.out.println(player.toString());
         }
@@ -63,7 +68,7 @@ public class Game {
         System.out.println("Punteggio del banco: " + punteggioBanco);
 
         int punteggioGiocatore = giocatore.calcolaPunteggio();
-        System.out.println("Punteggio di " + giocatore.getNome() + punteggioGiocatore);
+        System.out.println("Punteggio di " + giocatore.getNome() + ": " + punteggioGiocatore);
 
         // Verifica se il giocatore umano ha sballato
         if (punteggioGiocatore > 21) {
@@ -83,13 +88,13 @@ public class Game {
 
             // Verifica se il bot ha sballato
             if (punteggioBot > 21) {
-            System.out.println(bot.getNome() + " ha sballato!");
+                System.out.println(bot.getNome() + " ha sballato!");
             } else if (punteggioBot > 21 || punteggioBot > punteggioBanco) {
-            System.out.println(bot.getNome() + " ha vinto!");
+                System.out.println(bot.getNome() + " ha vinto!");
             } else if (punteggioBot == punteggioBanco) {
-            System.out.println(bot.getNome() + " ed il banco hanno pareggiato");
+                System.out.println(bot.getNome() + " ed il banco hanno pareggiato");
             } else {
-            System.out.println(bot.getNome() + " ha perso!");
+                System.out.println(bot.getNome() + " ha perso!");
             }
         }
     }

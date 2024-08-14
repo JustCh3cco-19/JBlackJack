@@ -7,14 +7,15 @@ public class Banco extends Player {
     }
 
     @Override
-    protected int decidiValoreAsso() {
+    public int decidiValoreAsso() {
         // Il banco decide se l'asso vale 11 o 1 in base al punteggio corrente
         return calcolaPunteggio() + 11 <= 21 ? 11 : 1;
     }
 
     @Override
     public boolean devePescare() {
-        // Logica per il banco: il banco continua a pescare se il punteggio è inferiore a 17
+        // Logica per il banco: il banco continua a pescare se il punteggio è inferiore
+        // a 17
         return calcolaPunteggio() < 17;
     }
 

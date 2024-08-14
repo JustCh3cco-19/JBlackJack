@@ -11,7 +11,7 @@ public class Bot extends Player {
     }
 
     @Override
-    protected int decidiValoreAsso() {
+    public int decidiValoreAsso() {
         return random.nextBoolean() ? 11 : 1;
     }
 

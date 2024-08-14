@@ -1,6 +1,8 @@
 package main.model;
 
-public abstract class Player {
+import java.util.Observable;
+
+public abstract class Player extends Observable {
 
     public enum Ruolo {
         GIOCATORE,
@@ -11,11 +13,13 @@ public abstract class Player {
     protected Hand mano;
     protected String nome;
     protected Ruolo ruolo;
+    protected Stats stats;
 
     public Player(String nome, Ruolo ruolo) {
         this.nome = nome;
         this.mano = new Hand();
         this.ruolo = ruolo;
+        this.stats = new Stats();
     }
 
     public Ruolo getRuolo() {
@@ -29,13 +33,20 @@ public abstract class Player {
         } else {
             mano.addCarta(carta);
         }
+        setChanged();
+        notifyObservers();
+    }
+
+    // Metodo per accedere alle statistiche del giocatore
+    public Stats getStats() {
+        return stats;
     }
 
     // Definiamo il metodo come astratto in Player
-    protected abstract int decidiValoreAsso();
-    
+    public abstract int decidiValoreAsso();
+
     // Decidere se il giocatore deve pescare o meno
-    protected abstract boolean devePescare();
+    public abstract boolean devePescare();
 
     public int calcolaPunteggio() {
         return mano.calcolaPunteggio();
@@ -47,6 +58,15 @@ public abstract class Player {
 
     public String getNome() {
         return nome;
+    }
+
+    // Aggiorna le statistiche dopo una partita
+    public void aggiornaStatisticheDopoPartita(boolean vinta) {
+        if (vinta) {
+            stats.incrementaPartiteVinte();
+        } else {
+            stats.incrementaPartitePerse();
+        }
     }
 
     @Override
