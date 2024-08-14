@@ -1,34 +1,41 @@
 package main.model;
 
-import java.util.Scanner;
-public class Player {
-    private final Hand mano;
-    private final String nome;
+public abstract class Player {
 
-    public Player(String nome) {
+    public enum Ruolo {
+        GIOCATORE,
+        BOT,
+        BANCO
+    }
+
+    protected Hand mano;
+    protected String nome;
+    protected Ruolo ruolo;
+
+    public Player(String nome, Ruolo ruolo) {
         this.nome = nome;
         this.mano = new Hand();
+        this.ruolo = ruolo;
+    }
+
+    public Ruolo getRuolo() {
+        return ruolo;
     }
 
     public void addCarta(Carta carta) {
         if (carta.getPunteggio() == Carta.Punteggio.ASSO) {
-            int valoreAsso = chiediValoreAsso();
+            int valoreAsso = decidiValoreAsso();
             mano.addCartaConValoreAsso(carta, valoreAsso);
         } else {
             mano.addCarta(carta);
         }
     }
 
-    // Metodo provvisorio da sostituire con interfaccia grafica
-    private int chiediValoreAsso() {
-        Scanner scanner = new Scanner(System.in);
-        int valore = 0;
-        while (valore != 1 && valore != 11) {
-            System.out.println("Hai pescato un asso, vuoi farlo valere 1 o 11?");
-            valore = scanner.nextInt();
-        }
-        return valore;
-    }
+    // Definiamo il metodo come astratto in Player
+    protected abstract int decidiValoreAsso();
+    
+    // Decidere se il giocatore deve pescare o meno
+    protected abstract boolean devePescare();
 
     public int calcolaPunteggio() {
         return mano.calcolaPunteggio();
@@ -44,6 +51,6 @@ public class Player {
 
     @Override
     public String toString() {
-        return nome + " con mano: " + mano.toString() + " - Punteggio: " + calcolaPunteggio();
+        return nome + " (" + ruolo + ") con mano: " + mano.toString() + " - Punteggio: " + calcolaPunteggio();
     }
 }
