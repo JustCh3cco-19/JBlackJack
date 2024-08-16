@@ -7,17 +7,19 @@ public class Bot extends Player {
     private Random random = new Random();
 
     public Bot() {
-        super(NomiBot.getNomeRandom(), Ruolo.BOT);
+        // Passiamo il PlayerProfile e il Ruolo al costruttore di Player
+        super(new PlayerProfile(NomiBot.getNomeRandom(), Player.Ruolo.BOT), null);
     }
 
     @Override
     public int decidiValoreAsso() {
+        // Decide casualmente se l'asso vale 1 o 11
         return random.nextBoolean() ? 11 : 1;
     }
 
     @Override
     public boolean devePescare() {
-        // Logica per i bot: il bot continua a pescare se il punteggio è inferiore a 17
+        // Il bot continua a pescare se il punteggio è inferiore a 17
         return calcolaPunteggio() < 17;
     }
 

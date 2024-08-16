@@ -1,8 +1,10 @@
 package main.model;
 
+import java.io.Serializable;
 import java.util.Observable;
 
-public abstract class Player extends Observable {
+public abstract class Player extends Observable implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public enum Ruolo {
         GIOCATORE,
@@ -11,12 +13,13 @@ public abstract class Player extends Observable {
     }
 
     protected Hand mano;
-    protected String nome;
+    protected PlayerProfile profilo;
     protected Ruolo ruolo;
     protected Stats stats;
 
-    public Player(String nome, Ruolo ruolo) {
-        this.nome = nome;
+    // Costruttore che accetta un PlayerProfile e un Ruolo
+    public Player(PlayerProfile profilo, Ruolo ruolo) {
+        this.profilo = profilo;
         this.mano = new Hand();
         this.ruolo = ruolo;
         this.stats = new Stats();
@@ -37,15 +40,12 @@ public abstract class Player extends Observable {
         notifyObservers();
     }
 
-    // Metodo per accedere alle statistiche del giocatore
     public Stats getStats() {
         return stats;
     }
 
-    // Definiamo il metodo come astratto in Player
     public abstract int decidiValoreAsso();
 
-    // Decidere se il giocatore deve pescare o meno
     public abstract boolean devePescare();
 
     public int calcolaPunteggio() {
@@ -57,10 +57,9 @@ public abstract class Player extends Observable {
     }
 
     public String getNome() {
-        return nome;
+        return profilo.getNome();
     }
 
-    // Aggiorna le statistiche dopo una partita
     public void aggiornaStatisticheDopoPartita(boolean vinta) {
         if (vinta) {
             stats.incrementaPartiteVinte();
@@ -71,6 +70,6 @@ public abstract class Player extends Observable {
 
     @Override
     public String toString() {
-        return nome + " (" + ruolo + ") con mano: " + mano.toString() + " - Punteggio: " + calcolaPunteggio();
+        return getNome() + " (" + ruolo + ") con mano: " + mano.toString() + " - Punteggio: " + calcolaPunteggio();
     }
 }

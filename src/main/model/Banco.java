@@ -2,8 +2,14 @@ package main.model;
 
 public class Banco extends Player {
 
+    // Costruttore senza parametri, con nome fisso "Banco"
     public Banco() {
-        super("Banco", Ruolo.BANCO);
+        super(null, Ruolo.BANCO); // Passiamo null per il profilo, e assegnamo il ruolo BANCO
+    }
+
+    @Override
+    public String getNome() {
+        return "Banco"; // Override del metodo getNome per restituire "Banco"
     }
 
     @Override
