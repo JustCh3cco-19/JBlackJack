@@ -1,27 +1,43 @@
 package main.model;
 
-public class PlayerProfile {
+import java.io.Serializable;
 
-    private String nome;
-    private Player.Ruolo ruolo;
+public class PlayerProfile implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    // Costruttore aggiornato per accettare un nome e un ruolo
-    public PlayerProfile(String nome, Player.Ruolo ruolo) {
-        this.nome = nome;
-        this.ruolo = ruolo;
+    private String nickname;
+    private String avatar;
+    // private Player.Ruolo ruolo; // Se il ruolo è richiesto
+
+    // Costruttore che accetta nickname e avatar
+    public PlayerProfile(String nickname, String avatar) {
+        this.nickname = nickname;
+        this.avatar = avatar;
     }
 
-    // Getter e altri metodi se necessario
     public String getNome() {
-        return nome;
+        return nickname;
     }
 
-    public Player.Ruolo getRuolo() {
-        return ruolo;
+    // Getter e Setter per nickname e avatar
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     @Override
     public String toString() {
-        return nome + " (" + ruolo + ")";
+        return "Nickname: " + nickname + ", Avatar: " + avatar;
     }
 }

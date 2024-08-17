@@ -25,6 +25,11 @@ public abstract class Player extends Observable implements Serializable {
         this.stats = new Stats();
     }
 
+    // Costruttore alternativo che accetta solo un Ruolo
+    public Player(Ruolo ruolo) {
+        this(null, ruolo); // Chiama il costruttore principale con profilo nullo
+    }
+
     public Ruolo getRuolo() {
         return ruolo;
     }
