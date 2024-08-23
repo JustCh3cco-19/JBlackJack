@@ -21,6 +21,11 @@ public class Game {
         return deck;
     }
 
+    // Metodo per ottenere il banco
+    public Player getBanco() {
+        return banco;
+    }
+
     // Metodo per iniziare il gioco
     public void startGioco() {
         // Distribuisci le carte ai giocatori
@@ -42,7 +47,7 @@ public class Game {
     }
 
     // Metodo per configurare le mani iniziali dei giocatori
-    private void setupInitialHands() {
+    public void setupInitialHands() {
         // Distribuisci due carte ad ogni giocatore umano, ai bot e al banco
         giocatore.addCarta(deck.pescaCarta());
         giocatore.addCarta(deck.pescaCarta());
@@ -56,14 +61,7 @@ public class Game {
         banco.addCarta(deck.pescaCarta());
     }
 
-    private void managePlayerTurn(Player player) {
-        while (player.devePescare()) {
-            player.addCarta(deck.pescaCarta());
-            System.out.println(player.toString());
-        }
-    }
-
-    private void determinaVincitore() {
+    public void determinaVincitore() {
         int punteggioBanco = banco.calcolaPunteggio();
         System.out.println("Punteggio del banco: " + punteggioBanco);
 
@@ -96,6 +94,13 @@ public class Game {
             } else {
                 System.out.println(bot.getNome() + " ha perso!");
             }
+        }
+    }
+
+    private void managePlayerTurn(Player player) {
+        while (player.devePescare()) {
+            player.addCarta(deck.pescaCarta());
+            System.out.println(player.toString());
         }
     }
 }
