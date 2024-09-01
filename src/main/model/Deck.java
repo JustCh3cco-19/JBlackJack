@@ -1,43 +1,39 @@
 package main.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+// model/Deck.java
+import java.util.*;
+import java.util.stream.*;
 
-public class Deck {
-    private List<Carta> carte;
+class Deck {
+    private static Deck instance;
+    private List<Card> cards;
 
-    public Deck() {
-        carte = new ArrayList<>();
-        initializeDeck(); // Initialize the deck with cards
-        mescola(); // Shuffle the deck after initializing
+    private Deck() {
+        initializeDeck();
     }
 
-    // Metodo per inizializzare il mazzo con le carte
+    public static Deck getInstance() {
+        if (instance == null) {
+            instance = new Deck();
+        }
+        return instance;
+    }
+
     private void initializeDeck() {
-        // Assuming Carta.Punteggio represents different values and each value should appear multiple times
-        for (Carta.Punteggio punteggio : Carta.Punteggio.values()) {
-            // For a standard deck, each value would be repeated 4 times (one for each suit)
-            for (int i = 0; i < 4; i++) {
-                carte.add(new Carta(punteggio));
-            }
-        }
+        cards = new ArrayList<>();
+        String[] suits = { "Hearts", "Diamonds", "Clubs", "Spades" };
+        String[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
+
+        Arrays.stream(suits)
+                .flatMap(suit -> Arrays.stream(ranks).map(rank -> CardFactory.createCard(suit, rank)))
+                .forEach(cards::add);
     }
 
-    // Metodo per mescolare le carte
-    public void mescola() {
-        Collections.shuffle(carte);
+    public void shuffle() {
+        Collections.shuffle(cards);
     }
 
-    public Carta pescaCarta() {
-        if (carte.isEmpty()) {
-            throw new IllegalStateException("Il mazzo è vuoto");
-        }
-        return carte.remove(0);
-    }
-
-    // restituisce il numero di carte nel mazzo
-    public int carteRimaste() {
-        return carte.size();
+    public Card drawCard() {
+        return cards.remove(cards.size() - 1);
     }
 }

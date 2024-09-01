@@ -1,80 +1,56 @@
 package main.model;
 
-import java.io.Serializable;
-import java.util.Observable;
+// model/Player.java
 
-public abstract class Player extends Observable implements Serializable {
-    private static final long serialVersionUID = 1L;
+import java.util.ArrayList;
+import java.util.List;
 
-    public enum Ruolo {
-        GIOCATORE,
-        BOT,
-        BANCO
+public class Player {
+    private List<Card> hand;
+    private String name;
+    private PlayerStrategy strategy;
+
+    public Player(String name, PlayerStrategy strategy) {
+        this.name = name;
+        this.strategy = strategy;
+        this.hand = new ArrayList<>();
     }
 
-    protected Hand mano;
-    protected PlayerProfile profilo;
-    protected Ruolo ruolo;
-    protected Stats stats;
-
-    // Costruttore che accetta un PlayerProfile e un Ruolo
-    public Player(PlayerProfile profilo, Ruolo ruolo) {
-        this.profilo = profilo;
-        this.mano = new Hand();
-        this.ruolo = ruolo;
-        this.stats = new Stats();
+    public void addCard(Card card) {
+        hand.add(card);
     }
 
-    // Costruttore alternativo che accetta solo un Ruolo
-    public Player(Ruolo ruolo) {
-        this(null, ruolo); // Chiama il costruttore principale con profilo nullo
-    }
-
-    public Ruolo getRuolo() {
-        return ruolo;
-    }
-
-    public void addCarta(Carta carta) {
-        if (carta.getPunteggio() == Carta.Punteggio.ASSO) {
-            int valoreAsso = decidiValoreAsso();
-            mano.addCartaConValoreAsso(carta, valoreAsso);
-        } else {
-            mano.addCarta(carta);
+    public int getHandValue() {
+        int value = hand.stream().mapToInt(Card::getValue).sum();
+        long aceCount = hand.stream().filter(card -> card.getRank().equals("Ace")).count();
+        while (value > 21 && aceCount > 0) {
+            value -= 10;
+            aceCount--;
         }
-        setChanged();
-        notifyObservers();
+        return value;
     }
 
-    public Stats getStats() {
-        return stats;
+    public boolean wantsToHit(Card dealerUpCard) {
+        return strategy.wantsToHit(hand, dealerUpCard);
     }
 
-    public abstract int decidiValoreAsso();
-
-    public abstract boolean devePescare();
-
-    public int calcolaPunteggio() {
-        return mano.calcolaPunteggio();
+    public List<Card> getHand() {
+        return hand;
     }
 
-    public Hand getMano() {
-        return mano;
+    public String getName() {
+        return name;
     }
 
-    public String getNome() {
-        return profilo.getNome();
+    public Card getVisibleCard() {
+        return hand.get(0);
     }
 
-    public void aggiornaStatisticheDopoPartita(boolean vinta) {
-        if (vinta) {
-            stats.incrementaPartiteVinte();
-        } else {
-            stats.incrementaPartitePerse();
-        }
+    public void clearHand() {
+        hand.clear();
     }
 
-    @Override
-    public String toString() {
-        return getNome() + " (" + ruolo + ") con mano: " + mano.toString() + " - Punteggio: " + calcolaPunteggio();
+    public PlayerStrategy getStrategy() {
+        return strategy;
     }
 }
