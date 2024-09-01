@@ -9,6 +9,7 @@ public class BlackjackModel extends Observable {
     private int currentPlayerIndex;
     private UserProfile userProfile;
     private Player dealer;
+    private boolean isBotOrDealerTurn; // Flag per indicare se è il turno di un bot o del dealer
 
     public BlackjackModel(String nickname, String avatarPath) {
         players = new ArrayList<>();
@@ -19,6 +20,7 @@ public class BlackjackModel extends Observable {
         deck = Deck.getInstance();
         currentPlayerIndex = 0;
         userProfile = new UserProfile(nickname, avatarPath);
+        isBotOrDealerTurn = false;
     }
 
     public void startGame() {
@@ -33,51 +35,80 @@ public class BlackjackModel extends Observable {
             players.forEach(player -> player.addCard(deck.drawCard()));
             dealer.addCard(deck.drawCard()); // Distribuisce carte anche al dealer
         });
+        setChanged();
+        notifyObservers();
     }
 
     public void hit() {
         Player currentPlayer = players.get(currentPlayerIndex);
         currentPlayer.addCard(deck.drawCard());
         if (currentPlayer.getHandValue() > 21) {
-            stand();
+            stand(); // Se il giocatore sfora, passa il turno
+        } else {
+            setChanged();
+            notifyObservers(); // Notifica la vista ogni volta che il giocatore pesca una carta
         }
-        setChanged();
-        notifyObservers();
     }
 
     public void stand() {
         currentPlayerIndex++;
         if (currentPlayerIndex >= players.size()) {
+            // Tutti i giocatori hanno completato il turno, ora tocca al dealer
             playDealerTurn();
-        } else if (!players.get(currentPlayerIndex).isHuman()) {
-            playAITurn();
+        } else {
+            Player nextPlayer = players.get(currentPlayerIndex);
+            if (!nextPlayer.isHuman()) {
+                playAITurn(); // Se è un bot, giocano
+            } else {
+                setChanged();
+                notifyObservers(); // Notifica la vista per il cambio di turno
+            }
         }
-        setChanged();
-        notifyObservers();
     }
 
     private void playAITurn() {
+        isBotOrDealerTurn = true;
         Player aiPlayer = players.get(currentPlayerIndex);
-        while (aiPlayer.wantsToHit(dealer.getVisibleCard())) {
-            aiPlayer.addCard(deck.drawCard());
-            if (aiPlayer.getHandValue() > 21) {
-                break;
+        new Thread(() -> { // Utilizza un thread per simulare la pausa tra le azioni
+            while (aiPlayer.wantsToHit(dealer.getVisibleCard())) {
+                aiPlayer.addCard(deck.drawCard());
+                setChanged();
+                notifyObservers(); // Notifica la vista ad ogni carta pescata
+                try {
+                    Thread.sleep(2000); // Pausa di 2 secondi per simulare la riflessione del bot
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                if (aiPlayer.getHandValue() > 21) {
+                    break;
+                }
             }
-        }
-        stand();
+            stand(); // Dopo il turno del bot, passa al turno successivo
+        }).start();
     }
 
     private void playDealerTurn() {
-        while (dealer.wantsToHit(null)) { // Il dealer gioca secondo la sua strategia
-            dealer.addCard(deck.drawCard());
-            if (dealer.getHandValue() > 21) {
-                break;
+        isBotOrDealerTurn = true;
+        new Thread(() -> { // Utilizza un thread per simulare la pausa tra le azioni
+            while (dealer.wantsToHit(null)) {
+                dealer.addCard(deck.drawCard());
+                setChanged();
+                notifyObservers(); // Notifica la vista ad ogni carta pescata
+                try {
+                    Thread.sleep(2000); // Pausa di 2 secondi per simulare la riflessione del dealer
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                if (dealer.getHandValue() > 21) {
+                    break;
+                }
             }
-        }
-        endRound();
+            endRound(); // Dopo che il dealer ha finito, conclude il round
+        }).start();
     }
 
     private void endRound() {
+        isBotOrDealerTurn = false;
         determineWinner();
         resetRound();
         setChanged();
@@ -85,7 +116,7 @@ public class BlackjackModel extends Observable {
     }
 
     private void determineWinner() {
-        boolean humanWins = players.stream().anyMatch(player -> player.getHandValue() <= 21 &&
+        boolean humanWins = players.stream().allMatch(player -> player.getHandValue() <= 21 &&
                 (dealer.getHandValue() > 21 || player.getHandValue() > dealer.getHandValue()));
 
         if (humanWins) {
@@ -119,5 +150,9 @@ public class BlackjackModel extends Observable {
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
+    }
+
+    public boolean isBotOrDealerTurn() {
+        return isBotOrDealerTurn;
     }
 }
