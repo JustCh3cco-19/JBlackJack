@@ -3,9 +3,9 @@ package main.view;
 import main.model.*;
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.List;
 
 public class BlackjackView extends JFrame implements Observer {
     private JPanel gamePanel;
@@ -16,7 +16,7 @@ public class BlackjackView extends JFrame implements Observer {
     private JLabel profileLabel;
 
     public BlackjackView() {
-        setTitle("Blackjack Game");
+        setTitle("JBlackJack");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLayout(new BorderLayout());
@@ -24,8 +24,8 @@ public class BlackjackView extends JFrame implements Observer {
         gamePanel = new JPanel(new BorderLayout());
         playerPanel = new JPanel(new FlowLayout());
         dealerPanel = new JPanel(new FlowLayout());
-        hitButton = new JButton("Hit");
-        standButton = new JButton("Stand");
+        hitButton = new JButton("Rilancia");
+        standButton = new JButton("Stai");
         profileLabel = new JLabel();
 
         gamePanel.add(dealerPanel, BorderLayout.NORTH);
@@ -54,23 +54,35 @@ public class BlackjackView extends JFrame implements Observer {
         playerPanel.removeAll();
         dealerPanel.removeAll();
 
-        for (int i = 0; i < players.size(); i++) {
-            Player player = players.get(i);
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            panel.add(new JLabel(player.getName()));
+        // Assumiamo che il giocatore sia il primo (indice 0) e il banco il secondo
+        // (indice 1)
+        if (players.size() >= 2) {
+            Player player = players.get(0);
+            Player dealer = players.get(1);
+
+            // Aggiorna la mano del giocatore
+            JPanel playerHandPanel = new JPanel();
+            playerHandPanel.setLayout(new BoxLayout(playerHandPanel, BoxLayout.Y_AXIS));
+            playerHandPanel.add(new JLabel(player.getName()));
 
             for (Card card : player.getHand()) {
-                panel.add(new JLabel(card.getRank() + " of " + card.getSuit()));
+                playerHandPanel.add(new JLabel(card.getRank() + " di " + card.getSuit()));
             }
 
-            panel.add(new JLabel("Hand Value: " + player.getHandValue()));
+            playerHandPanel.add(new JLabel("Valore mano: " + player.getHandValue()));
+            playerPanel.add(playerHandPanel);
 
-            if (i == 0) {
-                playerPanel.add(panel);
-            } else {
-                dealerPanel.add(panel);
+            // Aggiorna la mano del banco
+            JPanel dealerHandPanel = new JPanel();
+            dealerHandPanel.setLayout(new BoxLayout(dealerHandPanel, BoxLayout.Y_AXIS));
+            dealerHandPanel.add(new JLabel(dealer.getName()));
+
+            for (Card card : dealer.getHand()) {
+                dealerHandPanel.add(new JLabel(card.getRank() + " di " + card.getSuit()));
             }
+
+            dealerHandPanel.add(new JLabel("Valore mano: " + dealer.getHandValue()));
+            dealerPanel.add(dealerHandPanel);
         }
 
         playerPanel.revalidate();
@@ -80,12 +92,12 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     private void updateProfileInfo(UserProfile profile) {
-        profileLabel.setText("<html>Player: " + profile.getNickname() +
-                "<br>Level: " + profile.getLevel() +
-                "<br>Experience: " + profile.getExperience() +
-                "<br>Games Played: " + profile.getGamesPlayed() +
-                "<br>Games Won: " + profile.getGamesWon() +
-                "<br>Games Lost: " + profile.getGamesLost() + "</html>");
+        profileLabel.setText("<html>Giocatore: " + profile.getNickname() +
+                "<br>Livello: " + profile.getLevel() +
+                "<br>Punti Esperienza: " + profile.getExperience() +
+                "<br>Partite Giocate: " + profile.getGamesPlayed() +
+                "<br>Partite Vinte: " + profile.getGamesWon() +
+                "<br>Partite Perse: " + profile.getGamesLost() + "</html>");
     }
 
     private void updateButtons(boolean playerTurn) {

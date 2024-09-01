@@ -1,7 +1,5 @@
 package main.model;
 
-// model/UserProfile.java
-
 public class UserProfile {
     private String nickname;
     private String avatarPath;
@@ -17,7 +15,7 @@ public class UserProfile {
         this.gamesPlayed = 0;
         this.gamesWon = 0;
         this.gamesLost = 0;
-        this.level = 1;
+        this.level = 0;
         this.experience = 0;
     }
 

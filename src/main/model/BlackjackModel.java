@@ -1,4 +1,3 @@
-// model/BlackjackModel.java
 package main.model;
 
 import java.util.*;
@@ -9,12 +8,14 @@ public class BlackjackModel extends Observable {
     private Deck deck;
     private int currentPlayerIndex;
     private UserProfile userProfile;
+    private Player dealer;
 
     public BlackjackModel(String nickname, String avatarPath) {
         players = new ArrayList<>();
-        players.add(new Player(nickname, new HumanPlayerStrategy()));
-        players.add(new Player("AI Player 1", new BasicAIStrategy()));
-        players.add(new Player("AI Player 2", new BasicAIStrategy()));
+        players.add(new Player(nickname, new HumanPlayerStrategy(), true));
+        players.add(new Player("MaxVerstappen", new BotStrategy(), false));
+        players.add(new Player("CharlesLeclerc", new BotStrategy(), false));
+        dealer = new Player("Banco", new DealerStrategy(), false); // Aggiungi il dealer
         deck = Deck.getInstance();
         currentPlayerIndex = 0;
         userProfile = new UserProfile(nickname, avatarPath);
@@ -28,7 +29,10 @@ public class BlackjackModel extends Observable {
     }
 
     private void dealInitialCards() {
-        IntStream.range(0, 2).forEach(i -> players.forEach(player -> player.addCard(deck.drawCard())));
+        IntStream.range(0, 2).forEach(i -> {
+            players.forEach(player -> player.addCard(deck.drawCard()));
+            dealer.addCard(deck.drawCard()); // Distribuisce carte anche al dealer
+        });
     }
 
     public void hit() {
@@ -44,8 +48,8 @@ public class BlackjackModel extends Observable {
     public void stand() {
         currentPlayerIndex++;
         if (currentPlayerIndex >= players.size()) {
-            endRound();
-        } else if (players.get(currentPlayerIndex).getStrategy() instanceof BasicAIStrategy) {
+            playDealerTurn();
+        } else if (!players.get(currentPlayerIndex).isHuman()) {
             playAITurn();
         }
         setChanged();
@@ -54,13 +58,23 @@ public class BlackjackModel extends Observable {
 
     private void playAITurn() {
         Player aiPlayer = players.get(currentPlayerIndex);
-        while (aiPlayer.wantsToHit(players.get(0).getVisibleCard())) {
+        while (aiPlayer.wantsToHit(dealer.getVisibleCard())) {
             aiPlayer.addCard(deck.drawCard());
             if (aiPlayer.getHandValue() > 21) {
                 break;
             }
         }
         stand();
+    }
+
+    private void playDealerTurn() {
+        while (dealer.wantsToHit(null)) { // Il dealer gioca secondo la sua strategia
+            dealer.addCard(deck.drawCard());
+            if (dealer.getHandValue() > 21) {
+                break;
+            }
+        }
+        endRound();
     }
 
     private void endRound() {
@@ -71,12 +85,8 @@ public class BlackjackModel extends Observable {
     }
 
     private void determineWinner() {
-        Player humanPlayer = players.get(0);
-        boolean humanWins = players.stream()
-                .skip(1)
-                .allMatch(player -> player.getHandValue() > 21 ||
-                        (humanPlayer.getHandValue() <= 21 &&
-                                humanPlayer.getHandValue() > player.getHandValue()));
+        boolean humanWins = players.stream().anyMatch(player -> player.getHandValue() <= 21 &&
+                (dealer.getHandValue() > 21 || player.getHandValue() > dealer.getHandValue()));
 
         if (humanWins) {
             userProfile.incrementGamesWon();
@@ -88,6 +98,7 @@ public class BlackjackModel extends Observable {
 
     private void resetRound() {
         players.forEach(Player::clearHand);
+        dealer.clearHand(); // Resetta anche il dealer
         currentPlayerIndex = 0;
         deck = Deck.getInstance();
         deck.shuffle();
@@ -96,6 +107,10 @@ public class BlackjackModel extends Observable {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Player getDealer() {
+        return dealer;
     }
 
     public UserProfile getUserProfile() {

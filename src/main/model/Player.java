@@ -1,7 +1,5 @@
 package main.model;
 
-// model/Player.java
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +7,12 @@ public class Player {
     private List<Card> hand;
     private String name;
     private PlayerStrategy strategy;
+    private boolean isHuman;
 
-    public Player(String name, PlayerStrategy strategy) {
+    public Player(String name, PlayerStrategy strategy, boolean isHuman) {
         this.name = name;
         this.strategy = strategy;
+        this.isHuman = isHuman;
         this.hand = new ArrayList<>();
     }
 
@@ -22,7 +22,7 @@ public class Player {
 
     public int getHandValue() {
         int value = hand.stream().mapToInt(Card::getValue).sum();
-        long aceCount = hand.stream().filter(card -> card.getRank().equals("Ace")).count();
+        long aceCount = hand.stream().filter(card -> card.getRank().equals("Asso")).count();
         while (value > 21 && aceCount > 0) {
             value -= 10;
             aceCount--;
@@ -52,5 +52,9 @@ public class Player {
 
     public PlayerStrategy getStrategy() {
         return strategy;
+    }
+
+    public boolean isHuman() {
+        return isHuman;
     }
 }

@@ -19,15 +19,20 @@ public class BlackjackController {
         view.getHitButton().addActionListener(e -> hit());
         view.getStandButton().addActionListener(e -> stand());
 
-        model.startGame();
+        startGame();
     }
 
     private void hit() {
-        audioManager.play("resources/audio/card_flip.wav");
+        audioManager.play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/card_flip.wav");
         model.hit();
     }
 
     private void stand() {
-        audioManager.play("resources/audio/chip_place.wav");
+        audioManager.play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/chip_place.wav");
+        model.stand();
+    }
+
+    private void startGame() {
+        model.startGame();
     }
 }
