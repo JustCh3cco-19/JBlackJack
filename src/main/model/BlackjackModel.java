@@ -16,8 +16,8 @@ public class BlackjackModel extends Observable {
         players = new ArrayList<>();
         players.add(new Player(nickname, new HumanPlayerStrategy(), true));
         players.add(new Player("MaxVerstappen", new BotStrategy(), false));
-        players.add(new Player("CharlesLeclerc", new BotStrategy(), false));
-        dealer = new Player("Banco", new DealerStrategy(), false); // Aggiungi il dealer
+        players.add(new Player("KimiRaikkonen", new BotStrategy(), false));
+        dealer = new Player("Banco", new DealerStrategy(), false); // Aggiungi il banco
         deck = Deck.getInstance();
         currentPlayerIndex = 0;
         userProfile = new UserProfile(nickname, avatarPath);

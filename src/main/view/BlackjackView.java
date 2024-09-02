@@ -22,22 +22,40 @@ public class BlackjackView extends JFrame implements Observer {
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        gamePanel = new JPanel(new BorderLayout());
-        playerPanel = new JPanel(new FlowLayout());
-        dealerPanel = new JPanel(new FlowLayout());
+        // Pannello di gioco con sfondo verde
+        gamePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(new Color(0, 128, 0)); // Imposta il colore verde
+                g.fillRect(0, 0, getWidth(), getHeight()); // Riempi il pannello con il colore verde
+            }
+        };
+        gamePanel.setLayout(null); // Usa layout null per posizionamento assoluto
+
+        playerPanel = new JPanel();
+        playerPanel.setOpaque(false); // Rendi il pannello trasparente
+        playerPanel.setBounds(200, 400, 400, 100); // Posiziona il pannello dei giocatori
+        playerPanel.setLayout(new FlowLayout());
+
+        dealerPanel = new JPanel();
+        dealerPanel.setOpaque(false); // Rendi il pannello trasparente
+        dealerPanel.setBounds(200, 50, 400, 100); // Posiziona il pannello del dealer
+        dealerPanel.setLayout(new FlowLayout());
+
         hitButton = new JButton("Rilancia");
         standButton = new JButton("Stai");
+
         profileLabel = new JLabel();
         statusLabel = new JLabel("Benvenuto nel gioco!");
-
-        gamePanel.add(dealerPanel, BorderLayout.NORTH);
-        gamePanel.add(playerPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(hitButton);
         buttonPanel.add(standButton);
 
         add(gamePanel, BorderLayout.CENTER);
+        gamePanel.add(dealerPanel);
+        gamePanel.add(playerPanel);
         add(buttonPanel, BorderLayout.SOUTH);
         add(profileLabel, BorderLayout.EAST);
         add(statusLabel, BorderLayout.NORTH); // Aggiungi l'etichetta dello stato in alto
@@ -67,7 +85,17 @@ public class BlackjackView extends JFrame implements Observer {
         playerPanel.removeAll();
         dealerPanel.removeAll();
 
-        // Aggiungi i giocatori umani e bot
+        // Aggiungi il dealer senza avatar, solo con nome e carte
+        JPanel dealerPanel = new JPanel();
+        dealerPanel.setLayout(new BoxLayout(dealerPanel, BoxLayout.Y_AXIS));
+        dealerPanel.add(new JLabel(dealer.getName()));
+        for (Card card : dealer.getHand()) {
+            dealerPanel.add(new JLabel(card.getRank() + " di " + card.getSuit()));
+        }
+        dealerPanel.add(new JLabel("Valore mano: " + dealer.getHandValue()));
+        this.dealerPanel.add(dealerPanel); // Aggiungi il pannello del dealer al pannello principale del dealer
+
+        // Aggiungi i giocatori umani e bot senza avatar
         for (Player player : players) {
             JPanel playerPanel = new JPanel();
             playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
@@ -81,16 +109,6 @@ public class BlackjackView extends JFrame implements Observer {
             this.playerPanel.add(playerPanel); // Aggiungi il pannello del giocatore al pannello principale dei
                                                // giocatori
         }
-
-        // Aggiungi il dealer
-        JPanel dealerPanel = new JPanel();
-        dealerPanel.setLayout(new BoxLayout(dealerPanel, BoxLayout.Y_AXIS));
-        dealerPanel.add(new JLabel(dealer.getName()));
-        for (Card card : dealer.getHand()) {
-            dealerPanel.add(new JLabel(card.getRank() + " di " + card.getSuit()));
-        }
-        dealerPanel.add(new JLabel("Valore mano: " + dealer.getHandValue()));
-        this.dealerPanel.add(dealerPanel); // Aggiungi il pannello del dealer al pannello principale del dealer
 
         this.playerPanel.revalidate();
         this.playerPanel.repaint();
