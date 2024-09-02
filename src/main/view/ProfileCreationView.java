@@ -18,18 +18,21 @@ public class ProfileCreationView extends JFrame {
 
     public ProfileCreationView(BlackjackController controller) {
         setTitle("Crea o accedi al Profilo");
-        setSize(400, 200);
+        setSize(800, 600); // Imposta la dimensione della finestra
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Usa un GridBagLayout per una disposizione flessibile
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(15, 15, 15, 15); // Margini più ampi per i componenti
+        gbc.fill = GridBagConstraints.HORIZONTAL; // I componenti riempiono orizzontalmente lo spazio disponibile
 
         // Etichetta e campo per il nickname
         JLabel nicknameLabel = new JLabel("Nome Utente:");
-        nicknameField = new JTextField(15);
+        nicknameLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Aumenta la dimensione del font
+        nicknameField = new JTextField(20); // Campo di testo più lungo
+        nicknameField.setFont(new Font("Arial", Font.PLAIN, 18)); // Aumenta la dimensione del font
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(nicknameLabel, gbc);
@@ -39,6 +42,7 @@ public class ProfileCreationView extends JFrame {
 
         // Etichetta e combobox per la selezione dell'avatar
         JLabel avatarLabel = new JLabel("Scegli un avatar:");
+        avatarLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Aumenta la dimensione del font
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(avatarLabel, gbc);
@@ -47,7 +51,7 @@ public class ProfileCreationView extends JFrame {
         String basePath = "/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/images/";
         String[] avatars = { "CharlesLeclerc.png", "MaxVerstappen.png", "LewisHamilton.png" };
         ImageIcon[] avatarIcons = new ImageIcon[avatars.length];
-        int avatarSize = 50; // Dimensione foto tessera (es. 50x50 pixel)
+        int avatarSize = 100; // Dimensione maggiore per gli avatar (es. 100x100 pixel)
 
         for (int i = 0; i < avatars.length; i++) {
             ImageIcon originalIcon = new ImageIcon(basePath + avatars[i]);
@@ -63,6 +67,7 @@ public class ProfileCreationView extends JFrame {
 
         // Bottone per confermare la creazione del profilo
         confirmButton = new JButton("Accedi");
+        confirmButton.setFont(new Font("Arial", Font.BOLD, 20)); // Aumenta la dimensione del font
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,26 +80,7 @@ public class ProfileCreationView extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER; // Centra il bottone
         add(confirmButton, gbc);
 
-        // Avvia il thread della musica di sottofondo
-        startBackgroundMusic();
-
-        pack();
         setVisible(true);
-    }
-
-    private void startBackgroundMusic() {
-        backgroundMusicThread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                AudioManager.getInstance()
-                        .play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/main_menu.wav");
-                try {
-                    Thread.sleep(60000); // Supponiamo che la musica duri 30 secondi
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Interrompi il thread se riceve un'interruzione
-                }
-            }
-        });
-        backgroundMusicThread.start();
     }
 
     private void createProfile() {
@@ -108,7 +94,7 @@ public class ProfileCreationView extends JFrame {
         userProfile = new UserProfile(nickname, avatarPath);
 
         AudioManager.getInstance()
-                .play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/start_game.wav");
+                .play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/game.wav");
 
         dispose(); // Chiudi la finestra corrente
     }
