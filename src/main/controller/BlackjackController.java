@@ -8,11 +8,13 @@ public class BlackjackController {
     private BlackjackModel model;
     private BlackjackView view;
     private AudioManager audioManager;
+    private static BlackjackController instance;
 
     public BlackjackController(BlackjackModel model, BlackjackView view) {
         this.model = model;
         this.view = view;
         this.audioManager = AudioManager.getInstance();
+        instance = this;
 
         model.addObserver(view);
 
@@ -20,6 +22,10 @@ public class BlackjackController {
         view.getStandButton().addActionListener(e -> stand());
 
         startGame();
+    }
+
+    public static BlackjackController getInstance() {
+        return instance;
     }
 
     private void hit() {
@@ -34,5 +40,9 @@ public class BlackjackController {
 
     private void startGame() {
         model.startGame();
+    }
+
+    public void restartGame() {
+        model.resetRound();
     }
 }

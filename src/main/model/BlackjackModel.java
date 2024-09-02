@@ -60,7 +60,7 @@ public class BlackjackModel extends Observable {
         } else {
             Player nextPlayer = players.get(currentPlayerIndex);
             if (!nextPlayer.isHuman()) {
-                playAITurn(); // Se è un bot, giocano
+                playAITurn(); // Se è un bot, gioca automaticamente
             } else {
                 setChanged();
                 notifyObservers(); // Notifica la vista per il cambio di turno
@@ -112,7 +112,6 @@ public class BlackjackModel extends Observable {
     private void endRound() {
         isBotOrDealerTurn = false;
         determineWinner();
-        resetRound();
         userProfile.saveProfile(); // Salva il profilo utente dopo ogni round
         setChanged();
         notifyObservers();
@@ -130,13 +129,15 @@ public class BlackjackModel extends Observable {
         userProfile.incrementGamesPlayed();
     }
 
-    private void resetRound() {
+    public void resetRound() {
         players.forEach(Player::clearHand);
         dealer.clearHand(); // Resetta anche il dealer
         currentPlayerIndex = 0;
         deck = Deck.getInstance();
         deck.shuffle();
         dealInitialCards();
+        setChanged();
+        notifyObservers(); // Notifica la vista dopo aver resettato il round
     }
 
     public List<Player> getPlayers() {
@@ -157,5 +158,21 @@ public class BlackjackModel extends Observable {
 
     public boolean isBotOrDealerTurn() {
         return isBotOrDealerTurn;
+    }
+
+    public boolean isGameOver() {
+        return currentPlayerIndex >= players.size();
+    }
+
+    public String getWinnerMessage() {
+        if (dealer.getHandValue() > 21) {
+            return "Tutti i giocatori hanno vinto! Il dealer ha sforato.";
+        } else {
+            Player winner = players.stream()
+                    .filter(p -> p.getHandValue() <= 21)
+                    .max(Comparator.comparingInt(Player::getHandValue))
+                    .orElse(dealer);
+            return winner.getName() + " ha vinto la partita!";
+        }
     }
 }
