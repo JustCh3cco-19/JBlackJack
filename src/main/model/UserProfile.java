@@ -1,5 +1,11 @@
 package main.model;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class UserProfile {
     private String nickname;
     private String avatarPath;
@@ -30,7 +36,6 @@ public class UserProfile {
 
     public void incrementGamesLost() {
         this.gamesLost++;
-        addExperience(20);
     }
 
     private void addExperience(int exp) {
@@ -75,5 +80,35 @@ public class UserProfile {
 
     public int getExperience() {
         return experience;
+    }
+
+    // Metodo per salvare il profilo utente su un file di testo
+    public void saveProfile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nickname + "_profile.txt"))) {
+            writer.write(nickname + "\n");
+            writer.write(avatarPath + "\n");
+            writer.write(gamesPlayed + "\n");
+            writer.write(gamesWon + "\n");
+            writer.write(gamesLost + "\n");
+            writer.write(level + "\n");
+            writer.write(experience + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Metodo per caricare il profilo utente da un file di testo
+    public void loadProfile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(nickname + "_profile.txt"))) {
+            this.nickname = reader.readLine();
+            this.avatarPath = reader.readLine();
+            this.gamesPlayed = Integer.parseInt(reader.readLine());
+            this.gamesWon = Integer.parseInt(reader.readLine());
+            this.gamesLost = Integer.parseInt(reader.readLine());
+            this.level = Integer.parseInt(reader.readLine());
+            this.experience = Integer.parseInt(reader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

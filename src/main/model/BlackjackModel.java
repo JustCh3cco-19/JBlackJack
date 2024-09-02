@@ -11,6 +11,7 @@ public class BlackjackModel extends Observable {
     private Player dealer;
     private boolean isBotOrDealerTurn; // Flag per indicare se è il turno di un bot o del dealer
 
+    // Costruttore
     public BlackjackModel(String nickname, String avatarPath) {
         players = new ArrayList<>();
         players.add(new Player(nickname, new HumanPlayerStrategy(), true));
@@ -20,6 +21,7 @@ public class BlackjackModel extends Observable {
         deck = Deck.getInstance();
         currentPlayerIndex = 0;
         userProfile = new UserProfile(nickname, avatarPath);
+        userProfile.loadProfile(); // Carica il profilo utente esistente, se presente
         isBotOrDealerTurn = false;
     }
 
@@ -111,6 +113,7 @@ public class BlackjackModel extends Observable {
         isBotOrDealerTurn = false;
         determineWinner();
         resetRound();
+        userProfile.saveProfile(); // Salva il profilo utente dopo ogni round
         setChanged();
         notifyObservers();
     }
