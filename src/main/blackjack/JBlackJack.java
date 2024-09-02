@@ -1,7 +1,6 @@
 package main.blackjack;
 
 import javax.swing.SwingUtilities;
-import javax.swing.event.*;
 import java.awt.event.*;
 
 import main.controller.BlackjackController;
