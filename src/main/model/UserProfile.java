@@ -84,7 +84,7 @@ public class UserProfile {
 
     // Metodo per salvare il profilo utente su un file di testo
     public void saveProfile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nickname + "_profile.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nickname + "_profilo.txt"))) {
             writer.write(nickname + "\n");
             writer.write(avatarPath + "\n");
             writer.write(gamesPlayed + "\n");
@@ -99,7 +99,7 @@ public class UserProfile {
 
     // Metodo per caricare il profilo utente da un file di testo
     public void loadProfile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(nickname + "_profile.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(nickname + "_profilo.txt"))) {
             this.nickname = reader.readLine();
             this.avatarPath = reader.readLine();
             this.gamesPlayed = Integer.parseInt(reader.readLine());
