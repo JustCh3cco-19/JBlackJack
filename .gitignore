@@ -1,32 +1,23 @@
-# File Java compilati
 *.class
 
-# File di progetto specifici di Eclipse
 .settings/
 
-# File di log
 *.log
 
-# File di backup creati dagli editor
 *~
 
-# File dei risultati dei test
 *.swp
 
-# Cartella di output dei compilatori Java
 bin/
 
 *.classpath
 
 *.project
 
-# BlueJ files
 *.ctxt
 
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -35,7 +26,6 @@ bin/
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
 
