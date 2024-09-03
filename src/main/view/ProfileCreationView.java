@@ -48,7 +48,7 @@ public class ProfileCreationView extends JFrame {
         add(avatarLabel, gbc);
 
         // Carica e ridimensiona le immagini degli avatar
-        String basePath = "/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/images/";
+        String basePath = "/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/images/avatars/";
         String[] avatars = { "CharlesLeclerc.png", "MaxVerstappen.png", "LewisHamilton.png", "KimiRaikkonen.png" };
         ImageIcon[] avatarIcons = new ImageIcon[avatars.length];
         int avatarSize = 100; // Dimensione maggiore per gli avatar (es. 100x100 pixel)

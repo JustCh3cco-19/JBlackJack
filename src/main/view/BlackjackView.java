@@ -108,12 +108,12 @@ public class BlackjackView extends JFrame implements Observer {
                 statusLabel.setText("");
             }
 
-            // Se la partita è terminata, mostra il vincitore
-            if (model.isGameOver()) {
+            // Check for the GAME_OVER flag
+            if (arg != null && arg.equals("GAME_OVER")) {
                 String winnerMessage = model.getWinnerMessage();
                 JOptionPane.showMessageDialog(this, winnerMessage, "Partita Terminata",
                         JOptionPane.INFORMATION_MESSAGE);
-                restartButton.setEnabled(true); // Abilita il pulsante "Ricomincia"
+                restartButton.setEnabled(true);
             }
 
             updateButtons(model.getCurrentPlayerIndex() == 0 && !model.isBotOrDealerTurn());
@@ -129,81 +129,60 @@ public class BlackjackView extends JFrame implements Observer {
         playerPanel.removeAll();
         dealerPanel.removeAll();
 
-        // Aggiungi il dealer con una carta scoperta e una coperta all'inizio
-        JPanel dealerPanel = new JPanel();
-        dealerPanel.setLayout(new BoxLayout(dealerPanel, BoxLayout.Y_AXIS));
-        dealerPanel.setOpaque(false); // Rendi il pannello trasparente
+        // Dealer's cards
+        JPanel dealerInfoPanel = new JPanel();
+        dealerInfoPanel.setLayout(new BoxLayout(dealerInfoPanel, BoxLayout.Y_AXIS));
+        dealerInfoPanel.setOpaque(false);
         JLabel dealerNameLabel = new JLabel(dealer.getName());
-        dealerNameLabel.setForeground(Color.WHITE); // Testo bianco per il nome del dealer
-        dealerPanel.add(dealerNameLabel);
+        dealerNameLabel.setForeground(Color.WHITE);
+        dealerInfoPanel.add(dealerNameLabel);
 
-        if (previousDealerHand == null) {
-            // Prima mano, mostra una carta scoperta e una coperta
+        if (currentPlayerIndex >= players.size()) {
+            // Show all dealer's cards if the game is over
+            for (Card card : dealer.getHand()) {
+                JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
+                cardLabel.setForeground(Color.WHITE);
+                dealerInfoPanel.add(cardLabel);
+            }
+        } else {
+            // Show only the first card of the dealer
             if (!dealer.getHand().isEmpty()) {
                 JLabel visibleCardLabel = new JLabel(
                         dealer.getHand().get(0).getRank() + " di " + dealer.getHand().get(0).getSuit());
-                visibleCardLabel.setForeground(Color.WHITE); // Testo bianco per la carta scoperta
-                dealerPanel.add(visibleCardLabel);
+                visibleCardLabel.setForeground(Color.WHITE);
+                dealerInfoPanel.add(visibleCardLabel);
 
                 JLabel hiddenCardLabel = new JLabel("Carta coperta");
-                hiddenCardLabel.setForeground(Color.WHITE); // Testo bianco per la carta coperta
-                dealerPanel.add(hiddenCardLabel);
-            }
-        } else {
-            // Mostra tutte le carte del dealer dopo che i bot hanno giocato
-            for (Card card : dealer.getHand()) {
-                JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
-                cardLabel.setForeground(Color.WHITE); // Testo bianco per le carte del dealer
-                dealerPanel.add(cardLabel);
+                hiddenCardLabel.setForeground(Color.WHITE);
+                dealerInfoPanel.add(hiddenCardLabel);
             }
         }
 
-        this.dealerPanel.add(dealerPanel); // Aggiungi il pannello del dealer al pannello principale del dealer
+        this.dealerPanel.add(dealerInfoPanel);
 
-        // Aggiungi i giocatori umani e bot senza avatar
+        // Players' cards
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            JPanel playerPanel = new JPanel();
-            playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
-            playerPanel.setOpaque(false); // Rendi il pannello trasparente
+            JPanel playerInfoPanel = new JPanel();
+            playerInfoPanel.setLayout(new BoxLayout(playerInfoPanel, BoxLayout.Y_AXIS));
+            playerInfoPanel.setOpaque(false);
             JLabel playerNameLabel = new JLabel(player.getName());
-            playerNameLabel.setForeground(Color.WHITE); // Testo bianco per il nome del giocatore
-            playerPanel.add(playerNameLabel);
+            playerNameLabel.setForeground(Color.WHITE);
+            playerInfoPanel.add(playerNameLabel);
 
-            if (i == currentPlayerIndex) {
-                // Mostra tutte le carte e la somma delle carte per il giocatore umano
-                for (Card card : player.getHand()) {
-                    JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
-                    cardLabel.setForeground(Color.WHITE); // Testo bianco per le carte del giocatore
-                    playerPanel.add(cardLabel);
-                }
-
-                // Mostra la somma delle carte del giocatore umano
-                JLabel playerHandValueLabel = new JLabel("Valore mano: " + player.getHandValue());
-                playerHandValueLabel.setForeground(Color.WHITE); // Testo bianco per il valore della mano
-                playerPanel.add(playerHandValueLabel);
-            } else {
-                // Mostra solo le nuove carte pescate dai bot
-                List<Card> previousHand = previousPlayerHands != null && i < previousPlayerHands.size()
-                        ? previousPlayerHands.get(i)
-                        : null;
-
-                if (previousHand != null && player.getHand().size() > previousHand.size()) {
-                    for (int j = previousHand.size(); j < player.getHand().size(); j++) {
-                        Card newCard = player.getHand().get(j);
-                        JLabel cardLabel = new JLabel(
-                                "Nuova carta pescata: " + newCard.getRank() + " di " + newCard.getSuit());
-                        cardLabel.setForeground(Color.WHITE); // Testo bianco per le carte pescate
-                        playerPanel.add(cardLabel);
-                    }
-                } else {
-                    // Mostra solo il numero di carte in mano del bot
-                    playerPanel.add(new JLabel("Carte in mano: " + player.getHand().size()));
-                }
+            // Always show all cards for all players
+            for (Card card : player.getHand()) {
+                JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
+                cardLabel.setForeground(Color.WHITE);
+                playerInfoPanel.add(cardLabel);
             }
 
-            this.playerPanel.add(playerPanel); // Aggiungi il pannello del giocatore al pannello principale dei
-                                               // giocatori
+            // Show hand value for all players
+            JLabel playerHandValueLabel = new JLabel("Valore mano: " + player.getHandValue());
+            playerHandValueLabel.setForeground(Color.WHITE);
+            playerInfoPanel.add(playerHandValueLabel);
+
+            this.playerPanel.add(playerInfoPanel);
         }
 
         this.playerPanel.revalidate();
