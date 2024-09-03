@@ -1,9 +1,8 @@
 package main.model;
 
 import java.util.*;
-import java.util.stream.*;
 
-class Deck {
+public class Deck {
     private static Deck instance;
     private List<Card> cards;
 

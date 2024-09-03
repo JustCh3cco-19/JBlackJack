@@ -144,6 +144,10 @@ public class BlackjackView extends JFrame implements Observer {
                 cardLabel.setForeground(Color.WHITE);
                 dealerInfoPanel.add(cardLabel);
             }
+            // Show dealer's hand value
+            JLabel dealerHandValueLabel = new JLabel("Valore mano: " + dealer.getHandValue());
+            dealerHandValueLabel.setForeground(Color.WHITE);
+            dealerInfoPanel.add(dealerHandValueLabel);
         } else {
             // Show only the first card of the dealer
             if (!dealer.getHand().isEmpty()) {

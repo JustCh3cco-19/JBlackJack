@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Observable;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 public class BlackjackModel extends Observable {
@@ -120,6 +119,14 @@ public class BlackjackModel extends Observable {
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
+    }
+
+    public String getCurrentPlayerName() {
+        return players.get(currentPlayerIndex).getName();
+    }
+
+    public int getCurrentPlayerHandValue() {
+        return players.get(currentPlayerIndex).getHandValue();
     }
 
     public boolean isGameOver() {
