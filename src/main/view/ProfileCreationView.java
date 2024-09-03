@@ -17,7 +17,7 @@ public class ProfileCreationView extends JFrame {
     private Thread backgroundMusicThread;
 
     public ProfileCreationView(BlackjackController controller) {
-        setTitle("Crea o accedi al Profilo");
+        setTitle("Manager Profilo");
         setSize(800, 600); // Imposta la dimensione della finestra
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

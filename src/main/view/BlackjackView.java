@@ -13,26 +13,27 @@ public class BlackjackView extends JFrame implements Observer {
     private JPanel gamePanel;
     private JPanel playerPanel;
     private JPanel dealerPanel;
-    private JPanel profilePanel; // Pannello per le statistiche del giocatore
+    private JPanel profilePanel;
     private JButton hitButton;
     private JButton standButton;
-    private JButton restartButton; // Pulsante per ricominciare la partita
+    private JButton restartButton;
     private JLabel profileLabel;
     private JLabel statusLabel;
+    private static final int PLAYER_PANEL_WIDTH = 150;
+    private static final int PLAYER_PANEL_HEIGHT = 250;
+    private static final int PLAYER_PANEL_SPACING = 20;
 
-    private List<Card> previousDealerHand; // Per tracciare lo stato precedente delle mani
+    private List<Card> previousDealerHand;
     private List<List<Card>> previousPlayerHands;
 
     public BlackjackView() {
         setTitle("JBlackJack");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600); // Modifica della dimensione della finestra
+        setSize(1000, 700); // Aumentata la dimensione della finestra
         setLayout(new BorderLayout());
 
-        // Colore verde
         Color greenColor = new Color(0, 128, 0);
 
-        // Pannello di gioco con sfondo verde
         gamePanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -41,57 +42,52 @@ public class BlackjackView extends JFrame implements Observer {
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-        gamePanel.setLayout(null); // Usa layout null per posizionamento assoluto
+        gamePanel.setLayout(null);
 
-        // Pannello per il giocatore
-        playerPanel = new JPanel();
-        playerPanel.setOpaque(false); // Rendi il pannello trasparente
-        playerPanel.setBounds(200, 400, 400, 100); // Posiziona il pannello dei giocatori
-        playerPanel.setLayout(new FlowLayout());
-
-        // Pannello per il dealer
         dealerPanel = new JPanel();
-        dealerPanel.setOpaque(false); // Rendi il pannello trasparente
-        dealerPanel.setBounds(200, 50, 400, 100); // Posiziona il pannello del dealer
-        dealerPanel.setLayout(new FlowLayout());
+        dealerPanel.setOpaque(false);
+        dealerPanel.setBounds(400, 50, 200, 150);
+        dealerPanel.setLayout(new BoxLayout(dealerPanel, BoxLayout.Y_AXIS));
 
-        // Pannello per le statistiche del profilo
+        playerPanel = new JPanel();
+        playerPanel.setOpaque(false);
+        playerPanel.setLayout(null); // Usiamo il layout null per posizionare manualmente i pannelli dei giocatori
+        playerPanel.setBounds(50, 300, 900, 300);
+
         profilePanel = new JPanel();
-        profilePanel.setBackground(greenColor); // Imposta lo sfondo verde per il pannello del profilo
+        profilePanel.setBackground(greenColor);
         profilePanel.setLayout(new BorderLayout());
 
         profileLabel = new JLabel();
-        profileLabel.setForeground(Color.WHITE); // Imposta il testo bianco per contrastare il verde
+        profileLabel.setForeground(Color.WHITE);
         profilePanel.add(profileLabel, BorderLayout.CENTER);
 
-        statusLabel = new JLabel("Benvenuto nel gioco!");
-        statusLabel.setForeground(Color.WHITE); // Imposta il testo bianco per contrastare il verde
-        statusLabel.setBackground(greenColor); // Imposta lo sfondo verde per lo stato
-        statusLabel.setOpaque(true); // Rendi visibile il colore di sfondo
+        statusLabel = new JLabel();
+        statusLabel.setForeground(Color.WHITE);
+        statusLabel.setBackground(greenColor);
+        statusLabel.setOpaque(true);
 
         hitButton = new JButton("Rilancia");
         standButton = new JButton("Stai");
 
         restartButton = new JButton("Ricomincia");
-        restartButton.setEnabled(false); // Disabilitato fino a fine partita
+        restartButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(hitButton);
         buttonPanel.add(standButton);
-        buttonPanel.add(restartButton); // Aggiungi il pulsante "Ricomincia"
+        buttonPanel.add(restartButton);
 
         add(gamePanel, BorderLayout.CENTER);
         gamePanel.add(dealerPanel);
         gamePanel.add(playerPanel);
         add(buttonPanel, BorderLayout.SOUTH);
-        add(profilePanel, BorderLayout.EAST); // Aggiungi il pannello delle statistiche
-        add(statusLabel, BorderLayout.NORTH); // Aggiungi l'etichetta dello stato in alto
+        add(profilePanel, BorderLayout.EAST);
+        add(statusLabel, BorderLayout.NORTH);
 
-        // Listener per il pulsante "Ricomincia"
         restartButton.addActionListener(e -> {
-            // Chiama un metodo del controller per ricominciare la partita
             BlackjackController.getInstance().restartGame();
-            restartButton.setEnabled(false); // Disabilita il pulsante dopo il riavvio
+            restartButton.setEnabled(false);
         });
     }
 
@@ -129,70 +125,58 @@ public class BlackjackView extends JFrame implements Observer {
         playerPanel.removeAll();
         dealerPanel.removeAll();
 
-        // Dealer's cards
-        JPanel dealerInfoPanel = new JPanel();
-        dealerInfoPanel.setLayout(new BoxLayout(dealerInfoPanel, BoxLayout.Y_AXIS));
-        dealerInfoPanel.setOpaque(false);
-        JLabel dealerNameLabel = new JLabel(dealer.getName());
-        dealerNameLabel.setForeground(Color.WHITE);
-        dealerInfoPanel.add(dealerNameLabel);
+        // Aggiorna il pannello del dealer
+        JPanel dealerInfoPanel = createPlayerInfoPanel(dealer, true);
+        dealerPanel.add(dealerInfoPanel);
 
-        if (currentPlayerIndex >= players.size()) {
-            // Show all dealer's cards if the game is over
-            for (Card card : dealer.getHand()) {
-                JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
-                cardLabel.setForeground(Color.WHITE);
-                dealerInfoPanel.add(cardLabel);
-            }
-            // Show dealer's hand value
-            JLabel dealerHandValueLabel = new JLabel("Valore mano: " + dealer.getHandValue());
-            dealerHandValueLabel.setForeground(Color.WHITE);
-            dealerInfoPanel.add(dealerHandValueLabel);
-        } else {
-            // Show only the first card of the dealer
-            if (!dealer.getHand().isEmpty()) {
-                JLabel visibleCardLabel = new JLabel(
-                        dealer.getHand().get(0).getRank() + " di " + dealer.getHand().get(0).getSuit());
-                visibleCardLabel.setForeground(Color.WHITE);
-                dealerInfoPanel.add(visibleCardLabel);
+        // Aggiorna i pannelli dei giocatori
+        int totalWidth = players.size() * (PLAYER_PANEL_WIDTH + PLAYER_PANEL_SPACING) - PLAYER_PANEL_SPACING;
+        int startX = (playerPanel.getWidth() - totalWidth) / 2;
 
-                JLabel hiddenCardLabel = new JLabel("Carta coperta");
-                hiddenCardLabel.setForeground(Color.WHITE);
-                dealerInfoPanel.add(hiddenCardLabel);
-            }
-        }
-
-        this.dealerPanel.add(dealerInfoPanel);
-
-        // Players' cards
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            JPanel playerInfoPanel = new JPanel();
-            playerInfoPanel.setLayout(new BoxLayout(playerInfoPanel, BoxLayout.Y_AXIS));
-            playerInfoPanel.setOpaque(false);
-            JLabel playerNameLabel = new JLabel(player.getName());
-            playerNameLabel.setForeground(Color.WHITE);
-            playerInfoPanel.add(playerNameLabel);
+            JPanel playerInfoPanel = createPlayerInfoPanel(player, false);
 
-            // Always show all cards for all players
-            for (Card card : player.getHand()) {
-                JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
-                cardLabel.setForeground(Color.WHITE);
-                playerInfoPanel.add(cardLabel);
-            }
+            int x = startX + i * (PLAYER_PANEL_WIDTH + PLAYER_PANEL_SPACING);
+            playerInfoPanel.setBounds(x, 0, PLAYER_PANEL_WIDTH, PLAYER_PANEL_HEIGHT);
 
-            // Show hand value for all players
-            JLabel playerHandValueLabel = new JLabel("Valore mano: " + player.getHandValue());
-            playerHandValueLabel.setForeground(Color.WHITE);
-            playerInfoPanel.add(playerHandValueLabel);
-
-            this.playerPanel.add(playerInfoPanel);
+            playerPanel.add(playerInfoPanel);
         }
 
-        this.playerPanel.revalidate();
-        this.playerPanel.repaint();
-        this.dealerPanel.revalidate();
-        this.dealerPanel.repaint();
+        playerPanel.revalidate();
+        playerPanel.repaint();
+        dealerPanel.revalidate();
+        dealerPanel.repaint();
+    }
+
+    private JPanel createPlayerInfoPanel(Player player, boolean isDealer) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+
+        JLabel nameLabel = new JLabel(player.getName());
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(nameLabel);
+        panel.add(Box.createVerticalStrut(10));
+
+        for (Card card : player.getHand()) {
+            JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
+            cardLabel.setForeground(Color.WHITE);
+            cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(cardLabel);
+        }
+
+        if (!isDealer || player.getHand().size() > 1) {
+            panel.add(Box.createVerticalStrut(10));
+            JLabel valueLabel = new JLabel("Valore: " + player.getHandValue());
+            valueLabel.setForeground(Color.WHITE);
+            valueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(valueLabel);
+        }
+
+        return panel;
     }
 
     private void updateProfileInfo(UserProfile profile) {
