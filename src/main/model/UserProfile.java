@@ -2,6 +2,7 @@ package main.model;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -82,9 +83,16 @@ public class UserProfile {
         return experience;
     }
 
-    // Metodo per salvare il profilo utente su un file di testo
+    // Metodo per salvare il profilo utente su un file di testo nella cartella
+    // "profiles"
     public void saveProfile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nickname + "_profilo.txt"))) {
+        File profilesDir = new File("profiles");
+        if (!profilesDir.exists()) {
+            profilesDir.mkdirs();
+        }
+
+        String filePath = "profiles" + File.separator + nickname + "_profilo.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write(nickname + "\n");
             writer.write(avatarPath + "\n");
             writer.write(gamesPlayed + "\n");
@@ -97,9 +105,11 @@ public class UserProfile {
         }
     }
 
-    // Metodo per caricare il profilo utente da un file di testo
+    // Metodo per caricare il profilo utente da un file di testo nella cartella
+    // "profiles"
     public void loadProfile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(nickname + "_profilo.txt"))) {
+        String filePath = "profiles" + File.separator + nickname + "_profilo.txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             this.nickname = reader.readLine();
             this.avatarPath = reader.readLine();
             this.gamesPlayed = Integer.parseInt(reader.readLine());

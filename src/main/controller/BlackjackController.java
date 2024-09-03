@@ -31,7 +31,7 @@ public class BlackjackController {
     }
 
     private void hit() {
-        audioManager.play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/card_flip.wav");
+        audioManager.play("src/main/resources/audio/card_flip.wav");
         boolean busted = model.hit();
         if (busted) {
             JOptionPane.showMessageDialog(view, "Hai sballato! Il tuo turno è finito.", "Sballato",
@@ -41,7 +41,7 @@ public class BlackjackController {
     }
 
     private void stand() {
-        audioManager.play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/chip_place.wav");
+        audioManager.play("src/main/resources/audio/chip_place.wav");
         model.stand();
         playNextTurn();
     }

@@ -83,13 +83,26 @@ public class BlackjackModel extends Observable {
     }
 
     private void determineWinner() {
-        boolean humanWins = players.stream().allMatch(player -> player.getHandValue() <= 21 &&
-                (dealer.getHandValue() > 21 || player.getHandValue() > dealer.getHandValue()));
+        Player humanPlayer = players.get(0);
+        int humanHandValue = humanPlayer.getHandValue();
+        int dealerHandValue = dealer.getHandValue();
 
-        if (humanWins) {
-            userProfile.incrementGamesWon();
-        } else {
+        if (humanHandValue > 21) {
+            // Il giocatore ha sballato
             userProfile.incrementGamesLost();
+        } else if (dealerHandValue > 21) {
+            // Il dealer ha sballato, il giocatore vince
+            userProfile.incrementGamesWon();
+        } else if (humanHandValue > dealerHandValue) {
+            // Il giocatore ha un punteggio più alto del dealer
+            userProfile.incrementGamesWon();
+        } else if (humanHandValue < dealerHandValue) {
+            // Il dealer ha un punteggio più alto del giocatore
+            userProfile.incrementGamesLost();
+        } else {
+            // Pareggio
+            // Puoi decidere come gestire i pareggi, ad esempio:
+            // userProfile.incrementGamesTied();
         }
         userProfile.incrementGamesPlayed();
     }
@@ -143,7 +156,7 @@ public class BlackjackModel extends Observable {
 
     public String getWinnerMessage() {
         if (dealer.getHandValue() > 21) {
-            return "Tutti i giocatori hanno vinto! Il dealer ha sforato.";
+            return "Tutti i giocatori hanno vinto! Il dealer ha sballato.";
         } else {
             Player winner = players.stream()
                     .filter(p -> p.getHandValue() <= 21)

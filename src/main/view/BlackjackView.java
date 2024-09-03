@@ -98,7 +98,7 @@ public class BlackjackView extends JFrame implements Observer {
             updatePlayerHands(model.getPlayers(), model.getDealer(), model.getCurrentPlayerIndex());
 
             if (model.isBotOrDealerTurn()) {
-                statusLabel.setText("In attesa che il bot o banco decida...");
+                statusLabel.setText("In attesa dei bot e del banco...");
             } else {
                 updateProfileInfo(model.getUserProfile());
                 statusLabel.setText("");
