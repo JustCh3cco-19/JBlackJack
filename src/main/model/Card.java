@@ -8,6 +8,6 @@ public interface Card {
     String getRank();
 
     default String getImageFileName() {
-        return getRank().toLowerCase() + "_of_" + getSuit().toLowerCase() + ".png";
+        return getRank() + "_of_" + getSuit() + ".png";
     }
 }

@@ -19,6 +19,6 @@ public class AceCard implements Card {
 
     @Override
     public String getRank() {
-        return "Ace";
+        return "ace";
     }
 }

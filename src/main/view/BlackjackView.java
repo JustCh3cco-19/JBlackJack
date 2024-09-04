@@ -179,20 +179,12 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     private JLabel createCardLabel(Card card, Player player, boolean isDealer) {
-        String imagePath = "/resources/cards/" + card.getImageFileName();
-
-        // Per il dealer, se è la prima carta, mostra il dorso
-        // if (isDealer && card == player.getHand().get(0)) {
-        // imagePath = "/resources/cards/back.png";
-        // }
-
-        // Tenta di caricare l'immagine
-        java.net.URL imageURL = getClass().getResource(imagePath);
-        if (imageURL != null) {
-            ImageIcon cardIcon = new ImageIcon(imageURL);
+        String imagePath = "src/main/resources/images/cards/" + card.getImageFileName();
+        java.io.File imageFile = new java.io.File(imagePath);
+        if (imageFile.exists()) {
+            ImageIcon cardIcon = new ImageIcon(imagePath);
             return new JLabel(cardIcon);
         } else {
-            // Immagine non trovata, usa un segnaposto o gestisci l'errore
             System.err.println("Immagine non trovata per il percorso: " + imagePath);
             return new JLabel("Immagine non trovata");
         }

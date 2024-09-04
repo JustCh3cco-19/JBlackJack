@@ -19,8 +19,8 @@ public class Deck {
 
     private void initializeDeck() {
         cards = new ArrayList<>();
-        String[] suits = { "Hearts", "Diamonds", "Clubs", "spades" };
-        String[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
+        String[] suits = { "hearts", "diamonds", "clubs", "spades" };
+        String[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace" };
 
         Arrays.stream(suits)
                 .flatMap(suit -> Arrays.stream(ranks).map(rank -> CardFactory.createCard(suit, rank)))
@@ -33,8 +33,8 @@ public class Deck {
 
     public Card drawCard() {
         if (cards.isEmpty()) {
-            initializeDeck(); // Ricrea il mazzo
-            shuffle(); // Rimescola il mazzo
+            initializeDeck(); // Recreate deck if empty
+            shuffle(); // Shuffle the newly created deck
         }
         return cards.remove(cards.size() - 1);
     }
