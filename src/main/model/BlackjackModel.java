@@ -156,7 +156,7 @@ public class BlackjackModel extends Observable {
 
     public String getWinnerMessage() {
         if (dealer.getHandValue() > 21) {
-            return "Tutti i giocatori hanno vinto! Il dealer ha sballato.";
+            return "Il dealer ha sballato.";
         } else {
             Player winner = players.stream()
                     .filter(p -> p.getHandValue() <= 21)

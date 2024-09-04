@@ -162,8 +162,7 @@ public class BlackjackView extends JFrame implements Observer {
         panel.add(Box.createVerticalStrut(10));
 
         for (Card card : player.getHand()) {
-            JLabel cardLabel = new JLabel(card.getRank() + " di " + card.getSuit());
-            cardLabel.setForeground(Color.WHITE);
+            JLabel cardLabel = createCardLabel(card, player, isDealer);
             cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             panel.add(cardLabel);
         }
@@ -177,6 +176,26 @@ public class BlackjackView extends JFrame implements Observer {
         }
 
         return panel;
+    }
+
+    private JLabel createCardLabel(Card card, Player player, boolean isDealer) {
+        String imagePath = "/resources/cards/" + card.getImageFileName();
+
+        // Per il dealer, se è la prima carta, mostra il dorso
+        // if (isDealer && card == player.getHand().get(0)) {
+        // imagePath = "/resources/cards/back.png";
+        // }
+
+        // Tenta di caricare l'immagine
+        java.net.URL imageURL = getClass().getResource(imagePath);
+        if (imageURL != null) {
+            ImageIcon cardIcon = new ImageIcon(imageURL);
+            return new JLabel(cardIcon);
+        } else {
+            // Immagine non trovata, usa un segnaposto o gestisci l'errore
+            System.err.println("Immagine non trovata per il percorso: " + imagePath);
+            return new JLabel("Immagine non trovata");
+        }
     }
 
     private void updateProfileInfo(UserProfile profile) {

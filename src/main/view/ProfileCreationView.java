@@ -114,8 +114,6 @@ public class ProfileCreationView extends JFrame {
     }
 
     private void loadAvatars() {
-        // Esempio di nomi di file, assicurati che questi file esistano nella directory
-        // specificata
         String[] avatarFiles = { "CharlesLeclerc.png", "LewisHamilton.png", "KimiRaikkonen.png", "MaxVerstappen.png" };
         for (String fileName : avatarFiles) {
             addAvatar(fileName);
