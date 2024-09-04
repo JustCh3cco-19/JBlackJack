@@ -47,11 +47,9 @@ public class MainMenuView extends JFrame {
     }
 
     private void createProfile() {
-        BlackjackModel model = new BlackjackModel(userProfile);
-        BlackjackView view = new BlackjackView();
-        BlackjackController controller = new BlackjackController(model, view, this);
-        ProfileCreationView profileCreationView = new ProfileCreationView(controller);
+        ProfileCreationView profileCreationView = new ProfileCreationView(userProfile); // Pass UserProfile
         profileCreationView.setVisible(true);
-        this.dispose(); // Chiudi il menu principale quando torni alla creazione del profilo
+        this.dispose(); // Close the main menu when going to profile creation
     }
+
 }

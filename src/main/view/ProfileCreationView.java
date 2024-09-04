@@ -1,86 +1,107 @@
 package main.view;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import main.controller.BlackjackController;
 import main.model.UserProfile;
+import java.awt.*;
+import java.awt.MediaTracker;
 
 public class ProfileCreationView extends JFrame {
     private JTextField nicknameField;
     private JComboBox<ImageIcon> avatarSelection;
     private JButton confirmButton;
     private UserProfile userProfile;
-    private BlackjackController controller;
 
-    public ProfileCreationView(BlackjackController controller) {
-        this.controller = controller; // Inizializza il controller
-        setTitle("Manager Profilo");
-        setSize(800, 600); // Imposta la dimensione della finestra
+    public ProfileCreationView(UserProfile userProfile) {
+        this.userProfile = userProfile;
+        initializeFrame();
+        setupPanels();
+        loadAvatars(); // Metodo per caricare gli avatar
+        setVisible(true);
+    }
+
+    private void initializeFrame() {
+        setTitle("Creazione Profilo");
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+    }
 
-        // Usa un GridBagLayout per una disposizione flessibile
+    private void setupPanels() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15); // Margini più ampi per i componenti
-        gbc.fill = GridBagConstraints.HORIZONTAL; // I componenti riempiono orizzontalmente lo spazio disponibile
+        gbc.insets = new Insets(10, 10, 10, 10); // Imposta gli spazi tra i componenti
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Etichetta e campo per il nickname
-        JLabel nicknameLabel = new JLabel("Nome Utente:");
-        nicknameLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Aumenta la dimensione del font
-        nicknameField = new JTextField(20); // Campo di testo più lungo
-        nicknameField.setFont(new Font("Arial", Font.PLAIN, 18)); // Aumenta la dimensione del font
+        // Pannello Nickname
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(nicknameLabel, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        add(nicknameField, gbc);
+        gbc.gridwidth = 2; // Estende il componente su due colonne
+        gbc.anchor = GridBagConstraints.NORTH; // Allinea il componente in alto
+        add(createNicknamePanel(), gbc);
 
-        // Etichetta e combobox per la selezione dell'avatar
-        JLabel avatarLabel = new JLabel("Scegli un avatar:");
-        avatarLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Aumenta la dimensione del font
+        // Pannello Avatar
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(avatarLabel, gbc);
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER; // Centra il componente
+        add(createAvatarPanel(), gbc);
 
-        // Carica e ridimensiona le immagini degli avatar
-        String basePath = "/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/images/avatars/";
-        String[] avatars = { "CharlesLeclerc.png", "MaxVerstappen.png", "LewisHamilton.png", "KimiRaikkonen.png" };
-        ImageIcon[] avatarIcons = new ImageIcon[avatars.length];
-        int avatarSize = 100; // Dimensione maggiore per gli avatar (es. 100x100 pixel)
-
-        for (int i = 0; i < avatars.length; i++) {
-            ImageIcon originalIcon = new ImageIcon(basePath + avatars[i]);
-            Image resizedImage = originalIcon.getImage().getScaledInstance(avatarSize, avatarSize, Image.SCALE_SMOOTH);
-            avatarIcons[i] = new ImageIcon(resizedImage);
-        }
-
-        // Crea il JComboBox con gli ImageIcon ridimensionati
-        avatarSelection = new JComboBox<>(avatarIcons);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        add(avatarSelection, gbc);
-
-        // Bottone per confermare la creazione del profilo
-        confirmButton = new JButton("Accedi");
-        confirmButton.setFont(new Font("Arial", Font.BOLD, 20)); // Aumenta la dimensione del font
-        confirmButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                createProfile();
-            }
-        });
+        // Bottone di conferma
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 2; // Il bottone occupa entrambe le colonne
-        gbc.anchor = GridBagConstraints.CENTER; // Centra il bottone
-        add(confirmButton, gbc);
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.SOUTH; // Allinea il componente in basso
+        add(createConfirmButton(), gbc);
+    }
 
-        setVisible(true);
+    private JPanel createNicknamePanel() {
+        JPanel nicknamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel nicknameLabel = new JLabel("Nickname: ");
+        nicknameLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Font più grande
+        nicknameField = new JTextField(20);
+        nicknameField.setFont(new Font("Arial", Font.PLAIN, 18)); // Font più grande
+        nicknamePanel.add(nicknameLabel);
+        nicknamePanel.add(nicknameField);
+        return nicknamePanel;
+    }
+
+    private JPanel createAvatarPanel() {
+        JPanel avatarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel avatarLabel = new JLabel("Seleziona Avatar:");
+        avatarLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Font più grande
+
+        // Inizializzazione di avatarSelection prima di usarlo
+        avatarSelection = new JComboBox<>();
+        avatarSelection.setPreferredSize(new Dimension(150, 150)); // Riduci la dimensione della selezione dell'avatar
+
+        avatarPanel.add(avatarLabel);
+        avatarPanel.add(avatarSelection);
+        return avatarPanel;
+    }
+
+    private void addAvatar(String fileName) {
+        ImageIcon icon = new ImageIcon("src/main/resources/images/avatars/" + fileName);
+        if (icon.getImageLoadStatus() != MediaTracker.COMPLETE) {
+            System.out.println("Errore nel caricamento dell'immagine: " + fileName);
+            return;
+        }
+        // Modifica le dimensioni qui per ingrandire l'immagine
+        ImageIcon resizedIcon = resizeIcon(icon, 150, 150); // Aumenta le dimensioni a 150x150 pixel
+        avatarSelection.addItem(resizedIcon);
+    }
+
+    private JButton createConfirmButton() {
+        JButton confirmButton = new JButton("Conferma");
+        confirmButton.setFont(new Font("Arial", Font.BOLD, 20)); // Font più grande
+        confirmButton.addActionListener(e -> createProfile());
+        return confirmButton;
+    }
+
+    private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
+        Image img = icon.getImage();
+        Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImg);
     }
 
     private void createProfile() {
@@ -88,11 +109,17 @@ public class ProfileCreationView extends JFrame {
         ImageIcon selectedAvatar = (ImageIcon) avatarSelection.getSelectedItem();
         String avatarPath = selectedAvatar.getDescription();
         userProfile = new UserProfile(nickname, avatarPath);
+        dispose();
+        new MainMenuView(userProfile).setVisible(true);
+    }
 
-        dispose(); // Chiudi la finestra corrente
-
-        MainMenuView menuView = new MainMenuView(userProfile);
-        menuView.setVisible(true);
+    private void loadAvatars() {
+        // Esempio di nomi di file, assicurati che questi file esistano nella directory
+        // specificata
+        String[] avatarFiles = { "CharlesLeclerc.png", "LewisHamilton.png", "KimiRaikkonen.png", "MaxVerstappen.png" };
+        for (String fileName : avatarFiles) {
+            addAvatar(fileName);
+        }
     }
 
     public UserProfile getUserProfile() {
