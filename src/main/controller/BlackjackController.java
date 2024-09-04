@@ -2,6 +2,7 @@ package main.controller;
 
 import main.model.BlackjackModel;
 import main.view.BlackjackView;
+import main.view.MainMenuView;
 import main.util.AudioManager;
 
 import javax.swing.JOptionPane;
@@ -12,7 +13,7 @@ public class BlackjackController {
     private AudioManager audioManager;
     private static BlackjackController instance;
 
-    public BlackjackController(BlackjackModel model, BlackjackView view) {
+    public BlackjackController(BlackjackModel model, BlackjackView view, MainMenuView mainMenu) {
         this.model = model;
         this.view = view;
         this.audioManager = AudioManager.getInstance();
@@ -24,6 +25,12 @@ public class BlackjackController {
         view.getStandButton().addActionListener(e -> stand());
 
         startGame();
+    }
+
+    private void startGame() {
+        model.startGame();
+        audioManager.play("src/main/resources/audio/game.wav"); // Assicurati che il percorso sia corretto
+        view.setVisible(true);
     }
 
     public static BlackjackController getInstance() {
@@ -72,10 +79,6 @@ public class BlackjackController {
                 model.endRound();
             }
         }).start();
-    }
-
-    private void startGame() {
-        model.startGame();
     }
 
     public void restartGame() {

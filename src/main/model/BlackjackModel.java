@@ -14,15 +14,15 @@ public class BlackjackModel extends Observable {
     private Player dealer;
 
     // Costruttore
-    public BlackjackModel(String nickname, String avatarPath) {
+    public BlackjackModel(UserProfile userProfile) {
         players = new ArrayList<>();
-        players.add(new Player(nickname, new HumanPlayerStrategy(), true));
+        players.add(new Player(userProfile.getNickname(), new HumanPlayerStrategy(), true));
         players.add(new Player("MaxVerstappen", new BotStrategy(), false));
         players.add(new Player("KimiRaikkonen", new BotStrategy(), false));
         dealer = new Player("Banco", new DealerStrategy(), false); // Aggiungi il banco
         deck = Deck.getInstance();
         currentPlayerIndex = 0;
-        userProfile = new UserProfile(nickname, avatarPath);
+        this.userProfile = userProfile;
         userProfile.loadProfile(); // Carica il profilo utente esistente, se presente
     }
 

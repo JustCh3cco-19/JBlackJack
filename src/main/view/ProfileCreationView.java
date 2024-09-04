@@ -7,16 +7,16 @@ import java.awt.event.ActionListener;
 
 import main.controller.BlackjackController;
 import main.model.UserProfile;
-import main.util.AudioManager;
 
 public class ProfileCreationView extends JFrame {
     private JTextField nicknameField;
     private JComboBox<ImageIcon> avatarSelection;
     private JButton confirmButton;
     private UserProfile userProfile;
-    private Thread backgroundMusicThread;
+    private BlackjackController controller;
 
     public ProfileCreationView(BlackjackController controller) {
+        this.controller = controller; // Inizializza il controller
         setTitle("Manager Profilo");
         setSize(800, 600); // Imposta la dimensione della finestra
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,19 +84,15 @@ public class ProfileCreationView extends JFrame {
     }
 
     private void createProfile() {
-        if (backgroundMusicThread != null && backgroundMusicThread.isAlive()) {
-            backgroundMusicThread.interrupt(); // Ferma la musica di sottofondo
-        }
-
         String nickname = nicknameField.getText();
         ImageIcon selectedAvatar = (ImageIcon) avatarSelection.getSelectedItem();
-        String avatarPath = selectedAvatar.getDescription(); // Ottieni il percorso dell'immagine
+        String avatarPath = selectedAvatar.getDescription();
         userProfile = new UserProfile(nickname, avatarPath);
 
-        AudioManager.getInstance()
-                .play("/home/justch3cco/eclipse-workspace/JBlackJack/src/main/resources/audio/game.wav");
-
         dispose(); // Chiudi la finestra corrente
+
+        MainMenuView menuView = new MainMenuView(userProfile);
+        menuView.setVisible(true);
     }
 
     public UserProfile getUserProfile() {
