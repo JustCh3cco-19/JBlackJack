@@ -12,6 +12,10 @@ public class MainMenuView extends JFrame {
 
     public MainMenuView(UserProfile userProfile) {
         this.userProfile = userProfile;
+
+        // Carica i dati del profilo quando si apre il menu principale
+        this.userProfile.loadProfile();
+
         setTitle("Menu Principale");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

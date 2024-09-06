@@ -190,7 +190,7 @@ public class BlackjackView extends JFrame implements Observer {
     private void updateProfileInfo(UserProfile profile) {
         profileLabel.setText("<html>Giocatore: " + profile.getNickname() +
                 "<br>Livello: " + profile.getLevel() +
-                "<br>Punti Esperienza: " + profile.getExperience() +
+                "<br>Esperienza: " + profile.getExperience() +
                 "<br>Partite Giocate: " + profile.getGamesPlayed() +
                 "<br>Partite Vinte: " + profile.getGamesWon() +
                 "<br>Partite Perse: " + profile.getGamesLost() + "</html>");

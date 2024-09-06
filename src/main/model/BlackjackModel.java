@@ -156,13 +156,21 @@ public class BlackjackModel extends Observable {
 
     public String getWinnerMessage() {
         if (dealer.getHandValue() > 21) {
-            return "Il dealer ha sballato.";
+            return "Il dealer ha sballato. Tutti vincono, a meno di aver sballato.";
         } else {
+            // Filtra solo i giocatori che non hanno sballato e confrontali anche con il
+            // dealer
             Player winner = players.stream()
                     .filter(p -> p.getHandValue() <= 21)
                     .max(Comparator.comparingInt(Player::getHandValue))
                     .orElse(dealer);
-            return winner.getName() + " ha vinto la partita!";
+
+            // Confronta il valore della mano del dealer con quello del vincitore
+            if (dealer.getHandValue() >= winner.getHandValue()) {
+                return "Il dealer ha vinto la partita!";
+            } else {
+                return winner.getName() + " ha vinto la partita!";
+            }
         }
     }
 }

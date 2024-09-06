@@ -3,7 +3,6 @@ package main.view;
 import javax.swing.*;
 import main.model.UserProfile;
 import java.awt.*;
-import java.awt.MediaTracker;
 
 public class ProfileCreationView extends JFrame {
     private JTextField nicknameField;
@@ -108,7 +107,11 @@ public class ProfileCreationView extends JFrame {
         String nickname = nicknameField.getText();
         ImageIcon selectedAvatar = (ImageIcon) avatarSelection.getSelectedItem();
         String avatarPath = selectedAvatar.getDescription();
+
+        // Carica il profilo se esiste già, altrimenti crea un nuovo profilo
         userProfile = new UserProfile(nickname, avatarPath);
+        userProfile.loadProfile(); // Carica il profilo se esiste
+
         dispose();
         new MainMenuView(userProfile).setVisible(true);
     }
