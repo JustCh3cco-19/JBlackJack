@@ -67,9 +67,9 @@ public class BlackjackView extends JFrame implements Observer {
         statusLabel.setBackground(greenColor);
         statusLabel.setOpaque(true);
 
-        hitButton = new JButton("Rilancia");
+        hitButton = new JButton("Pesca Carta");
         standButton = new JButton("Stai");
-        restartButton = new JButton("Ricomincia");
+        restartButton = new JButton("Ricomincia Partita");
         restartButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel();
