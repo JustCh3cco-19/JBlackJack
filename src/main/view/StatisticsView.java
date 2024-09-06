@@ -30,10 +30,4 @@ public class StatisticsView extends JFrame {
 
         setVisible(true);
     }
-
-    private void showStatistics() {
-        StatisticsView statsView = new StatisticsView(userProfile);
-        statsView.setVisible(true);
-    }
-
 }

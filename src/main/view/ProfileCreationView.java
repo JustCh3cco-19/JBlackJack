@@ -7,7 +7,6 @@ import java.awt.*;
 public class ProfileCreationView extends JFrame {
     private JTextField nicknameField;
     private JComboBox<ImageIcon> avatarSelection;
-    private JButton confirmButton;
     private UserProfile userProfile;
 
     public ProfileCreationView(UserProfile userProfile) {
@@ -91,7 +90,7 @@ public class ProfileCreationView extends JFrame {
     }
 
     private JButton createConfirmButton() {
-        JButton confirmButton = new JButton("Conferma");
+        JButton confirmButton = new JButton("Accedi");
         confirmButton.setFont(new Font("Arial", Font.BOLD, 20)); // Font più grande
         confirmButton.addActionListener(e -> createProfile());
         return confirmButton;
