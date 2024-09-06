@@ -19,11 +19,9 @@ public class BlackjackView extends JFrame implements Observer {
     private JLabel profileLabel;
     private JLabel statusLabel;
 
-    private static final int DEALER_PANEL_WIDTH = 400; // Aumentato da 200 a 400
+    private static final int DEALER_PANEL_WIDTH = 400;
     private static final int DEALER_PANEL_HEIGHT = 300;
-    private static final int PLAYER_PANEL_WIDTH = 400; // Aumentato anche questo per coerenza
     private static final int PLAYER_PANEL_HEIGHT = 300;
-    private static final int PLAYER_PANEL_SPACING = 50; // Ridotto da 100 a 50 per compensare
     private static final int CARD_WIDTH = 80;
     private static final int CARD_HEIGHT = 116;
     private static final int CARD_SPACING = 20;
@@ -48,7 +46,7 @@ public class BlackjackView extends JFrame implements Observer {
 
         dealerPanel = new JPanel();
         dealerPanel.setOpaque(false);
-        dealerPanel.setBounds(760, 50, DEALER_PANEL_WIDTH, DEALER_PANEL_HEIGHT); // X modificato da 860 a 760
+        dealerPanel.setBounds(760, 50, DEALER_PANEL_WIDTH, DEALER_PANEL_HEIGHT);
         gamePanel.add(dealerPanel);
 
         playerPanel = new JPanel(null);
@@ -100,7 +98,6 @@ public class BlackjackView extends JFrame implements Observer {
             if (model.isBotOrDealerTurn()) {
                 statusLabel.setText("In attesa dei bot e del banco...");
             } else {
-                updateProfileInfo(model.getUserProfile());
                 statusLabel.setText("");
             }
 
@@ -185,15 +182,6 @@ public class BlackjackView extends JFrame implements Observer {
             System.err.println("Immagine non trovata per il percorso: " + imagePath);
             return new JLabel("Immagine non trovata");
         }
-    }
-
-    private void updateProfileInfo(UserProfile profile) {
-        profileLabel.setText("<html>Giocatore: " + profile.getNickname() +
-                "<br>Livello: " + profile.getLevel() +
-                "<br>Esperienza: " + profile.getExperience() +
-                "<br>Partite Giocate: " + profile.getGamesPlayed() +
-                "<br>Partite Vinte: " + profile.getGamesWon() +
-                "<br>Partite Perse: " + profile.getGamesLost() + "</html>");
     }
 
     private void updateButtons(boolean enable) {

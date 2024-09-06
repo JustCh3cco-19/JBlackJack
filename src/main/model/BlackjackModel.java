@@ -62,7 +62,7 @@ public class BlackjackModel extends Observable {
 
     public boolean botWantsToHit() {
         Player currentPlayer = players.get(currentPlayerIndex);
-        return currentPlayer.wantsToHit(dealer.getVisibleCard());
+        return currentPlayer.wantsToHit();
     }
 
     public void endRound() {
@@ -74,7 +74,7 @@ public class BlackjackModel extends Observable {
     }
 
     private void playDealerTurn() {
-        while (dealer.wantsToHit(null)) {
+        while (dealer.wantsToHit()) {
             dealer.addCard(deck.drawCard());
             if (dealer.getHandValue() > 21) {
                 break;
@@ -87,22 +87,17 @@ public class BlackjackModel extends Observable {
         int humanHandValue = humanPlayer.getHandValue();
         int dealerHandValue = dealer.getHandValue();
 
+        System.out.println("Valore mano giocatore: " + humanHandValue);
+        System.out.println("Valore mano dealer: " + dealerHandValue);
+
         if (humanHandValue > 21) {
-            // Il giocatore ha sballato
             userProfile.incrementGamesLost();
         } else if (dealerHandValue > 21) {
-            // Il dealer ha sballato, il giocatore vince
             userProfile.incrementGamesWon();
         } else if (humanHandValue > dealerHandValue) {
-            // Il giocatore ha un punteggio più alto del dealer
             userProfile.incrementGamesWon();
         } else if (humanHandValue < dealerHandValue) {
-            // Il dealer ha un punteggio più alto del giocatore
             userProfile.incrementGamesLost();
-        } else {
-            // Pareggio
-            // Puoi decidere come gestire i pareggi, ad esempio:
-            // userProfile.incrementGamesTied();
         }
         userProfile.incrementGamesPlayed();
     }

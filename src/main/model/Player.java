@@ -30,8 +30,8 @@ public class Player {
         return value;
     }
 
-    public boolean wantsToHit(Card dealerUpCard) {
-        return strategy.wantsToHit(hand, dealerUpCard);
+    public boolean wantsToHit() {
+        return strategy.wantsToHit(hand);
     }
 
     public List<Card> getHand() {
