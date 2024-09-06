@@ -7,7 +7,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.stream.Collectors;
 
 public class BlackjackView extends JFrame implements Observer {
     private JPanel gamePanel;
@@ -19,17 +18,20 @@ public class BlackjackView extends JFrame implements Observer {
     private JButton restartButton;
     private JLabel profileLabel;
     private JLabel statusLabel;
-    private static final int PLAYER_PANEL_WIDTH = 150;
-    private static final int PLAYER_PANEL_HEIGHT = 250;
-    private static final int PLAYER_PANEL_SPACING = 20;
 
-    private List<Card> previousDealerHand;
-    private List<List<Card>> previousPlayerHands;
+    private static final int DEALER_PANEL_WIDTH = 400; // Aumentato da 200 a 400
+    private static final int DEALER_PANEL_HEIGHT = 300;
+    private static final int PLAYER_PANEL_WIDTH = 400; // Aumentato anche questo per coerenza
+    private static final int PLAYER_PANEL_HEIGHT = 300;
+    private static final int PLAYER_PANEL_SPACING = 50; // Ridotto da 100 a 50 per compensare
+    private static final int CARD_WIDTH = 80;
+    private static final int CARD_HEIGHT = 116;
+    private static final int CARD_SPACING = 20;
 
     public BlackjackView() {
         setTitle("JBlackJack");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700); // Aumentata la dimensione della finestra
+        setSize(1920, 1080);
         setLayout(new BorderLayout());
 
         Color greenColor = new Color(0, 128, 0);
@@ -46,13 +48,13 @@ public class BlackjackView extends JFrame implements Observer {
 
         dealerPanel = new JPanel();
         dealerPanel.setOpaque(false);
-        dealerPanel.setBounds(400, 50, 200, 150);
-        dealerPanel.setLayout(new BoxLayout(dealerPanel, BoxLayout.Y_AXIS));
+        dealerPanel.setBounds(760, 50, DEALER_PANEL_WIDTH, DEALER_PANEL_HEIGHT); // X modificato da 860 a 760
+        gamePanel.add(dealerPanel);
 
-        playerPanel = new JPanel();
+        playerPanel = new JPanel(null);
         playerPanel.setOpaque(false);
-        playerPanel.setLayout(null); // Usiamo il layout null per posizionare manualmente i pannelli dei giocatori
-        playerPanel.setBounds(50, 300, 900, 300);
+        playerPanel.setBounds(50, 400, 1820, PLAYER_PANEL_HEIGHT);
+        gamePanel.add(playerPanel);
 
         profilePanel = new JPanel();
         profilePanel.setBackground(greenColor);
@@ -69,7 +71,6 @@ public class BlackjackView extends JFrame implements Observer {
 
         hitButton = new JButton("Rilancia");
         standButton = new JButton("Stai");
-
         restartButton = new JButton("Ricomincia");
         restartButton.setEnabled(false);
 
@@ -79,8 +80,6 @@ public class BlackjackView extends JFrame implements Observer {
         buttonPanel.add(restartButton);
 
         add(gamePanel, BorderLayout.CENTER);
-        gamePanel.add(dealerPanel);
-        gamePanel.add(playerPanel);
         add(buttonPanel, BorderLayout.SOUTH);
         add(profilePanel, BorderLayout.EAST);
         add(statusLabel, BorderLayout.NORTH);
@@ -95,7 +94,8 @@ public class BlackjackView extends JFrame implements Observer {
     public void update(Observable o, Object arg) {
         if (o instanceof BlackjackModel) {
             BlackjackModel model = (BlackjackModel) o;
-            updatePlayerHands(model.getPlayers(), model.getDealer(), model.getCurrentPlayerIndex());
+            updateDealerHand(model.getDealer());
+            updatePlayerHands(model.getPlayers(), model.getCurrentPlayerIndex());
 
             if (model.isBotOrDealerTurn()) {
                 statusLabel.setText("In attesa dei bot e del banco...");
@@ -104,7 +104,6 @@ public class BlackjackView extends JFrame implements Observer {
                 statusLabel.setText("");
             }
 
-            // Check for the GAME_OVER flag
             if (arg != null && arg.equals("GAME_OVER")) {
                 String winnerMessage = model.getWinnerMessage();
                 JOptionPane.showMessageDialog(this, winnerMessage, "Partita Terminata",
@@ -113,77 +112,75 @@ public class BlackjackView extends JFrame implements Observer {
             }
 
             updateButtons(model.getCurrentPlayerIndex() == 0 && !model.isBotOrDealerTurn());
-
-            previousDealerHand = model.getDealer().getHand();
-            previousPlayerHands = model.getPlayers().stream()
-                    .map(Player::getHand)
-                    .collect(Collectors.toList());
         }
     }
 
-    private void updatePlayerHands(List<Player> players, Player dealer, int currentPlayerIndex) {
-        playerPanel.removeAll();
+    private void updateDealerHand(Player dealer) {
         dealerPanel.removeAll();
-
-        // Aggiorna il pannello del dealer
         JPanel dealerInfoPanel = createPlayerInfoPanel(dealer, true);
         dealerPanel.add(dealerInfoPanel);
+        dealerPanel.revalidate();
+        dealerPanel.repaint();
+    }
 
-        // Aggiorna i pannelli dei giocatori
-        int totalWidth = players.size() * (PLAYER_PANEL_WIDTH + PLAYER_PANEL_SPACING) - PLAYER_PANEL_SPACING;
+    private void updatePlayerHands(List<Player> players, int currentPlayerIndex) {
+        playerPanel.removeAll();
+
+        int totalWidth = players.size() * (CARD_WIDTH * 5 + CARD_SPACING * 4);
         int startX = (playerPanel.getWidth() - totalWidth) / 2;
 
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             JPanel playerInfoPanel = createPlayerInfoPanel(player, false);
 
-            int x = startX + i * (PLAYER_PANEL_WIDTH + PLAYER_PANEL_SPACING);
-            playerInfoPanel.setBounds(x, 0, PLAYER_PANEL_WIDTH, PLAYER_PANEL_HEIGHT);
+            int x = startX + i * (CARD_WIDTH * 5 + CARD_SPACING * 4);
+            playerInfoPanel.setBounds(x, 0, CARD_WIDTH * 5 + CARD_SPACING * 4, PLAYER_PANEL_HEIGHT);
 
             playerPanel.add(playerInfoPanel);
         }
 
         playerPanel.revalidate();
         playerPanel.repaint();
-        dealerPanel.revalidate();
-        dealerPanel.repaint();
     }
 
     private JPanel createPlayerInfoPanel(Player player, boolean isDealer) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
-        JLabel nameLabel = new JLabel(player.getName());
+        JLabel nameLabel = new JLabel(isDealer ? "Banco" : player.getName());
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(nameLabel);
         panel.add(Box.createVerticalStrut(10));
 
+        JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, CARD_SPACING, 0));
+        cardsPanel.setOpaque(false);
+
         for (Card card : player.getHand()) {
-            JLabel cardLabel = createCardLabel(card, player, isDealer);
-            cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            panel.add(cardLabel);
+            JLabel cardLabel = createCardLabel(card);
+            cardsPanel.add(cardLabel);
         }
 
-        if (!isDealer || player.getHand().size() > 1) {
-            panel.add(Box.createVerticalStrut(10));
-            JLabel valueLabel = new JLabel("Valore: " + player.getHandValue());
-            valueLabel.setForeground(Color.WHITE);
-            valueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            panel.add(valueLabel);
-        }
+        panel.add(cardsPanel);
+
+        panel.add(Box.createVerticalStrut(10));
+        JLabel valueLabel = new JLabel("Valore: " + player.getHandValue());
+        valueLabel.setForeground(Color.WHITE);
+        valueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(valueLabel);
 
         return panel;
     }
 
-    private JLabel createCardLabel(Card card, Player player, boolean isDealer) {
+    private JLabel createCardLabel(Card card) {
         String imagePath = "src/main/resources/images/cards/" + card.getImageFileName();
         java.io.File imageFile = new java.io.File(imagePath);
         if (imageFile.exists()) {
-            ImageIcon cardIcon = new ImageIcon(imagePath);
-            return new JLabel(cardIcon);
+            ImageIcon originalIcon = new ImageIcon(imagePath);
+            Image scaledImage = originalIcon.getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+            return new JLabel(scaledIcon);
         } else {
             System.err.println("Immagine non trovata per il percorso: " + imagePath);
             return new JLabel("Immagine non trovata");

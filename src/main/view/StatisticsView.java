@@ -20,7 +20,7 @@ public class StatisticsView extends JFrame {
         panel.add(new JLabel("Esperienza: " + userProfile.getExperience()));
         panel.add(new JLabel("Partite Giocate: " + userProfile.getGamesPlayed()));
         panel.add(new JLabel("Partite Vinte: " + userProfile.getGamesWon()));
-        panel.add(new JLabel(new ImageIcon(userProfile.getAvatarPath()))); // Mostra l'avatar
+        panel.add(new JLabel("Partite Perse: " + userProfile.getGamesLost()));
 
         JButton closeButton = new JButton("Chiudi");
         closeButton.addActionListener(e -> dispose());
