@@ -7,6 +7,25 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * La classe UserProfile rappresenta il profilo del giocatore.
+ * 
+ * <p>
+ * Questa classe gestisce le informazioni dell'utente, le statistiche di gioco e
+ * i punti esperienza.
+ * </p>
+ * 
+ * <p>
+ * Pattern utilizzati:
+ * - Singleton: questa classe potrebbe essere adattata
+ * per seguire il pattern Singleton se si desidera avere un'unica istanza
+ * di un profilo utente.
+ * - DTO (Data Transfer Object): Questa classe agisce come un DTO,
+ * incapsulando i dati dell'utente per il trasferimento tra il layer di
+ * persistenza (memorizzazione e recupero dati) e il layer di business
+ * logic (meccaniche di gioco).
+ * </p>
+ */
 public class UserProfile {
     private String nickname;
     private String avatarPath;
@@ -16,6 +35,13 @@ public class UserProfile {
     private int level;
     private int experience;
 
+    /**
+     * Costruttore che modella un nuovo profilo utente con il nickname e
+     * il percorso dell'avatar scelti dal giocatore.
+     *
+     * @param nickname   Il nickname dell'utente
+     * @param avatarPath Il percorso dell'immagine avatar dell'utente
+     */
     public UserProfile(String nickname, String avatarPath) {
         this.nickname = nickname;
         this.avatarPath = avatarPath;
@@ -26,19 +52,35 @@ public class UserProfile {
         this.experience = 0;
     }
 
+    /**
+     * Metodo che incrementa il numero di partite giocate dall'utente.
+     */
     public void incrementGamesPlayed() {
         this.gamesPlayed++;
     }
 
+    /**
+     * Metodo che incrementa il numero di partite vinte dall'utente e
+     * aggiunge punti esperienza se il giocatore umano dovesse vincere.
+     */
     public void incrementGamesWon() {
         this.gamesWon++;
         addExperience(100);
     }
 
+    /**
+     * Metodo che incrementa il numero di partite perse dall'utente.
+     */
     public void incrementGamesLost() {
         this.gamesLost++;
     }
 
+    /**
+     * Metodo che aggiunge punti esperienza al profilo dell'utente e
+     * controlla se è necessario salire di livello.
+     *
+     * @param exp La quantità di punti esperienza da aggiungere
+     */
     private void addExperience(int exp) {
         this.experience += exp;
         while (this.experience >= experienceNeededForNextLevel()) {
@@ -46,45 +88,33 @@ public class UserProfile {
         }
     }
 
+    /**
+     * Metodo che aumenta il livello dell'utente.
+     */
     private void levelUp() {
         this.level++;
     }
 
+    /**
+     * Metodo che calcola l'esperienza necessaria per il prossimo livello.
+     *
+     * @return La quantità di esperienza necessaria per il prossimo livello
+     */
     private int experienceNeededForNextLevel() {
         return this.level * 1000;
     }
 
-    // Getters
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getAvatarPath() {
-        return avatarPath;
-    }
-
-    public int getGamesPlayed() {
-        return gamesPlayed;
-    }
-
-    public int getGamesWon() {
-        return gamesWon;
-    }
-
-    public int getGamesLost() {
-        return gamesLost;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    // Metodo per salvare il profilo utente su un file di testo nella cartella
-    // "profiles"
+    /**
+     * Metodo che salva il profilo utente in un file di testo
+     * nella cartella "profiles".
+     * Il nome del file è basato sul nickname scelto dell'utente.
+     * 
+     * <p>
+     * Pattern utilizzati:
+     * - Serialization: serializzazione all'interno di un file txt per
+     * salvare l'oggetto in questione.
+     * </p>
+     */
     public void saveProfile() {
         File profilesDir = new File("profiles");
         if (!profilesDir.exists()) {
@@ -105,8 +135,17 @@ public class UserProfile {
         }
     }
 
-    // Metodo per caricare il profilo utente da un file di testo nella cartella
-    // "profiles"
+    /**
+     * Metodo che carica il profilo utente da un file di testo
+     * nella cartella "profiles".
+     * Il nome del file è basato sul nickname dell'utente.
+     * 
+     * <p>
+     * Pattern utilizzato:
+     * - Deserialization: deserializzazione per caricare lo stato di un
+     * oggetto da un file txt
+     * </p>
+     */
     public void loadProfile() {
         String filePath = "profiles" + File.separator + nickname + "_profilo.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -121,4 +160,68 @@ public class UserProfile {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Getter che restituisce il nickname dell'utente.
+     *
+     * @return Il nickname dell'utente
+     */
+    public String getNickname() {
+        return nickname;
+    }
+
+    /**
+     * Getter che restituisce il percorso dell'immagine avatar dell'utente.
+     *
+     * @return Il percorso dell'avatar
+     */
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    /**
+     * Getter che restituisce il numero di partite giocate dall'utente.
+     *
+     * @return Il numero di partite giocate
+     */
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    /**
+     * Getter che restituisce il numero di partite vinte dall'utente.
+     *
+     * @return Il numero di partite vinte
+     */
+    public int getGamesWon() {
+        return gamesWon;
+    }
+
+    /**
+     * Getter che restituisce il numero di partite perse dall'utente.
+     *
+     * @return Il numero di partite perse
+     */
+    public int getGamesLost() {
+        return gamesLost;
+    }
+
+    /**
+     * Getter che restituisce il livello dell'utente.
+     *
+     * @return Il livello dell'utente
+     */
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * Getter che restituisce i punti esperienza dell'utente.
+     *
+     * @return I punti esperienza dell'utente
+     */
+    public int getExperience() {
+        return experience;
+    }
+
 }

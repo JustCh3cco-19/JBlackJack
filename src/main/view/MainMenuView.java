@@ -7,9 +7,28 @@ import main.controller.BlackjackController;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * La classe MainMenuView rappresenta la View del menu principale del gioco.
+ * 
+ * <p>
+ * Questa classe gestisce l'interfaccia utente per il menu principale,
+ * permettendo all'utente di iniziare una partita, visualizzare le
+ * statistiche o tornare alla creazione di un profilo.
+ * </p>
+ */
 public class MainMenuView extends JFrame {
     private UserProfile userProfile;
 
+    /**
+     * Costruttore che modella una nuova istanza di MainMenuView.
+     * 
+     * <p>
+     * Inizializza l'interfaccia utente del menu principale e
+     * carica il profilo utente.
+     * </p>
+     * 
+     * @param userProfile Il profilo utente associato a questa sessione di gioco
+     */
     public MainMenuView(UserProfile userProfile) {
         this.userProfile = userProfile;
 
@@ -37,23 +56,38 @@ public class MainMenuView extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Metodo che avvia una nuova partita.
+     * 
+     * <p>
+     * Crea un nuovo modello, una nuova vista e un nuovo controller per il gioco.
+     * </p>
+     */
     private void startGame() {
         BlackjackModel model = new BlackjackModel(userProfile);
         BlackjackView view = new BlackjackView();
         BlackjackController controller = new BlackjackController(model, view, this);
         view.setVisible(true);
-        this.dispose(); // Chiudi il menu principale quando inizia il gioco
+        this.dispose();
     }
 
+    /**
+     * Metodo che mostra la finestra delle statistiche del giocatore.
+     * Crea e visualizza una nuova istanza di StatisticsView.
+     */
     private void showStatistics() {
         StatisticsView statsView = new StatisticsView(userProfile);
         statsView.setVisible(true);
     }
 
+    /**
+     * Metodo che avvia il processo di creazione di un nuovo profilo utente.
+     * Crea e visualizza una nuova istanza di ProfileCreationView,
+     * quindi chiude la finestra del menu principale.
+     */
     private void createProfile() {
-        ProfileCreationView profileCreationView = new ProfileCreationView(userProfile); // Pass UserProfile
+        ProfileCreationView profileCreationView = new ProfileCreationView(userProfile);
         profileCreationView.setVisible(true);
-        this.dispose(); // Close the main menu when going to profile creation
+        this.dispose();
     }
-
 }

@@ -3,12 +3,31 @@ package main.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La classe Player rappresenta un giocatore in un gioco di carte.
+ * 
+ * <p>
+ * Questa classe gestisce la mano del giocatore, la sua strategia di
+ * gioco, e fornisce metodi per interagire con il giocatore durante il gioco.
+ * </p>
+ */
 public class Player {
+    /** La mano attuale del giocatore */
     private List<Card> hand;
+    /** Il nome del giocatore */
     private String name;
+    /** La strategia di gioco del giocatore */
     private PlayerStrategy strategy;
+    /** Indica se il giocatore è umano o meno */
     private boolean isHuman;
 
+    /**
+     * Costruttore che modella un nuovo giocatore.
+     *
+     * @param name     il nome del giocatore
+     * @param strategy la strategia di gioco del giocatore umano
+     * @param isHuman  true se il giocatore è umano, false altrimenti
+     */
     public Player(String name, PlayerStrategy strategy, boolean isHuman) {
         this.name = name;
         this.strategy = strategy;
@@ -16,45 +35,82 @@ public class Player {
         this.hand = new ArrayList<>();
     }
 
+    /**
+     * Metodo che aggiunge una carta alla mano del giocatore.
+     *
+     * @param card la carta da aggiungere
+     */
     public void addCard(Card card) {
         hand.add(card);
     }
 
-    public int getHandValue() {
-        int value = hand.stream().mapToInt(Card::getValue).sum();
-        long aceCount = hand.stream().filter(card -> card.getRank().equals("Asso")).count();
-        while (value > 21 && aceCount > 0) {
-            value -= 10;
-            aceCount--;
-        }
-        return value;
-    }
-
+    /**
+     * Metodo che determina se il giocatore vuole chiedere un'altra carta.
+     *
+     * @return true se il giocatore vuole un'altra carta, false altrimenti
+     */
     public boolean wantsToHit() {
         return strategy.wantsToHit(hand);
     }
 
-    public List<Card> getHand() {
-        return hand;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Card getVisibleCard() {
-        return hand.get(0);
-    }
-
+    /**
+     * Metodo che rimuove tutte le carte dalla mano del giocatore.
+     */
     public void clearHand() {
         hand.clear();
     }
 
+    /**
+     * Metodo che indica se il giocatore è umano o meno.
+     *
+     * @return true se il giocatore è umano, false altrimenti
+     */
+    public boolean isHuman() {
+        return isHuman;
+    }
+
+    /**
+     * Getter che restituisce il valore totale della mano del giocatore.
+     * 
+     * <p>
+     * Una nota importante è che ,in questa implementazione, l'Asso vale
+     * sempre 11 punti indipendentemente dal valore totale della mano.
+     * </p>
+     *
+     * @return il valore totale della mano
+     */
+    public int getHandValue() {
+        return hand.stream()
+                .mapToInt(card -> card.getRank().equals("ace") ? 11 : card.getValue())
+                .sum();
+    }
+
+    /**
+     * Getter che restituisce la mano attuale del giocatore.
+     *
+     * @return la lista di carte nella mano del giocatore
+     */
+    public List<Card> getHand() {
+        return hand;
+    }
+
+    /**
+     * Getter che restituisce il nome del giocatore.
+     *
+     * @return il nome del giocatore
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Getter che restituisce il tipo di strategia di gioco
+     * adottata dal singolo giocatore.
+     *
+     * @return la strategia di gioco del giocatore
+     */
     public PlayerStrategy getStrategy() {
         return strategy;
     }
 
-    public boolean isHuman() {
-        return isHuman;
-    }
 }

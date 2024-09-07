@@ -5,18 +5,22 @@ import java.util.List;
 /**
  * La classe DealerStrategy implementa la strategia che adotterà il Banco.
  * 
+ * <p>
  * Pattern adottati:
  * - Strategy: definisce la strategia adottata dal banco.
- * 
+ * </p>
  */
 public class DealerStrategy implements PlayerStrategy {
     /**
      * Questo metodo determina se il mazziere vuole chiedere un'altra carta
      * basandosi sul valore della sua mano.
+     * 
+     * <p>
      * Questa implementazione segue la regola standard del Blackjack per il
      * mazziere:
      * chiedere un'altra carta se il valore totale della mano è inferiore a 17.
-     *
+     * </p>
+     * 
      * @param hand La lista di carte nella mano del mazziere
      * @return true se il mazziere vuole un'altra carta, false altrimenti
      */
