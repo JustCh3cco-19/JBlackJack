@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * La classe Player rappresenta un giocatore in un gioco di carte.
+ * La classe Player rappresenta un giocatore nel gioco.
  * 
  * <p>
  * Questa classe gestisce la mano del giocatore, la sua strategia di
