@@ -1,5 +1,12 @@
 package main.model;
 
+/**
+ * Classe CardFactory per la creazione di oggetti {@link Card}.
+ * 
+ * Pattern adottati:
+ * - Factory Method: definisce un'interfaccia per creare un oggetto,
+ * ma lascia alle sottoclassi decidere quale classe istanziare.
+ */
 public class CardFactory {
     public static Card createCard(String suit, String rank) {
         if (rank.equals("ace")) {
