@@ -128,8 +128,7 @@ public class BlackjackController {
      * 
      * <p>
      * Il bot attende 2 secondi tra le azioni per simulare un possibile ragionamento
-     * sul pescare la carta o stare. Quando il turno del bot è terminato,
-     * il controllo torna al giocatore umano.
+     * sul pescare la carta o stare.
      * </p>
      */
     private void playBotTurn() {
