@@ -125,13 +125,6 @@ public class BlackjackController {
 
     /**
      * Metodo che esegue il turno del bot in un thread separato.
-     * Ho adottato questa soluzione poiché eseguendo tutto in un unico
-     * thread la partita terminava non appena il giocatore umano finisse
-     * il suo turno.
-     * Con questa soluzione riesco a far sì che la partita si svolga
-     * nell'ordine corretto,
-     * ossia che il primo turno sta al giocatore umano,
-     * poi ai bot ed infine al Banco.
      * 
      * <p>
      * Il bot attende 2 secondi tra le azioni per simulare un possibile ragionamento
