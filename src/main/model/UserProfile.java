@@ -17,10 +17,8 @@ import java.io.IOException;
  * 
  * <p>
  * Pattern utilizzati:
- * - DTO (Data Transfer Object): Questa classe agisce come un DTO,
- * incapsulando i dati dell'utente per il trasferimento tra il layer di
- * persistenza (memorizzazione e recupero dati) e il layer di business
- * logic (meccaniche di gioco);
+ * - Domain Model: rappresenta l'utente e gestisce la logica legata alle
+ * sue statistiche e progressi nel gioco;
  * - Serialization: serializzazione all'interno di un file txt per
  * salvare l'oggetto in questione;
  * - Deserialization: deserializzazione per caricare lo stato di un

@@ -12,7 +12,7 @@ import java.awt.*;
  * Pattern adottati:
  * - MVC (Model-View-Controller): come parte della View per gestire
  * l'interfaccia grafica della creazione del profilo utente;
- * - Command: per poter creare il profilo utente.
+ * - Composite: organizza i componenti dell'interfaccia utente.
  * </p>
  */
 public class ProfileCreationView extends JFrame {
@@ -47,11 +47,6 @@ public class ProfileCreationView extends JFrame {
     /**
      * Metodo che configura i pannelli principali della finestra utilizzando
      * GridBagLayout.
-     * 
-     * <p>
-     * Pattern adottati:
-     * - Composite: organizza i componenti dell'interfaccia.
-     * </p>
      */
     private void setupPanels() {
         setLayout(new GridBagLayout());
