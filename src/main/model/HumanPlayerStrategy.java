@@ -3,24 +3,19 @@ package main.model;
 import java.util.List;
 
 /**
- * La classe HumanPlayerStrategy rappresenta la strategia di gioco per un
+ * La classe HumanPlayerStrategy implementa la strategia di gioco per il
  * giocatore umano.
  * 
  * <p>
- * Questa classe implementa l'interfaccia {@link PlayerStrategy} e definisce
- * il comportamento specifico per un giocatore umano in un gioco di carte.
- * </p>
- * 
- * <p>
  * Pattern adottati:
- * - Strategy: serve a gestire la strategia del giocatore umano in base
- * alle carte che ha nella sua mano.
+ * - Strategy: permette di cambiare la strategia di gioco del giocatore umano
+ * senza modificare PlayerStrategy.
  * </p>
  */
 public class HumanPlayerStrategy implements PlayerStrategy {
 
     /**
-     * Determina se il giocatore umano vuole chiedere un'altra carta.
+     * Metodo che determina se il giocatore umano vuole chiedere un'altra carta.
      * 
      * <p>
      * Questa implementazione attuale restituisce sempre false, indicando che
@@ -29,8 +24,8 @@ public class HumanPlayerStrategy implements PlayerStrategy {
      * base alle scelte che vuole compiere nel gioco.
      * </p>
      *
-     * @param hand La lista di carte nella mano del giocatore
-     * @return false, indicando che il giocatore non vuole un'altra carta
+     * @param hand La lista di carte nella mano del giocatore.
+     * @return false, indicando che il giocatore non vuole un'altra carta.
      */
     @Override
     public boolean wantsToHit(List<Card> hand) {

@@ -1,13 +1,14 @@
 package main.model;
 
 /**
- * La classe FaceCard rappresenta una carta figura
- * (Jack, Regina, Re) in un mazzo di carte.
+ * La classe FaceCard rappresenta una carta figura (Jack, Queen, King).
+ * Implementa l'interfaccia {@link Card} e fornisce il comportamento
+ * specifico per la carta FaceCard, che ha un valore fisso di 10.
  * 
  * <p>
- * Questa classe implementa l'interfaccia {@link Card} e definisce il
- * comportamento
- * specifico per le carte figura, che hanno sempre un valore di 10 nel gioco.
+ * Pattern utilizzati:
+ * - Composite: le singole carte (Leaf) che le collezioni di carte (Composite)
+ * implementano la stessa interfaccia {@link Card}.
  * </p>
  * 
  */
@@ -15,14 +16,14 @@ public class FaceCard implements Card {
     /** Il seme della carta */
     private String suit;
 
-    /** Il rango della carta (Jack, Regina, Re) */
+    /** Il rango della carta (Jack, Queen, King) */
     private String rank;
 
     /**
      * Costruttore che modella una nuova carta figura.
      *
-     * @param suit il seme della carta
-     * @param rank il rango della carta (deve essere "jack", "queen", o "king")
+     * @param suit Il seme della carta
+     * @param rank Il rango della carta (deve essere "jack", "queen", o "king")
      */
     public FaceCard(String suit, String rank) {
         this.suit = suit;
@@ -35,7 +36,7 @@ public class FaceCard implements Card {
      * Nelle regole standard, tutte le carte figura valgono 10 punti.
      *
      *
-     * @return il valore della carta, che è sempre 10 per le carte figura
+     * @return Il valore della carta, che è sempre 10 per le carte figura.
      */
     @Override
     public int getValue() {
@@ -45,7 +46,7 @@ public class FaceCard implements Card {
     /**
      * Getter che restituisce il seme della carta.
      *
-     * @return il seme della carta
+     * @return Il seme della carta.
      */
     @Override
     public String getSuit() {
@@ -55,7 +56,7 @@ public class FaceCard implements Card {
     /**
      * Getter che restituisce il rango della carta.
      *
-     * @return il rango della carta ("jack", "queen", o "king")
+     * @return Il rango della carta ("jack", "queen", o "king").
      */
     @Override
     public String getRank() {

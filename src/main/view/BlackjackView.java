@@ -12,12 +12,16 @@ import java.util.Observer;
  * La classe BlackjackView rappresenta la View del gioco.
  * 
  * <p>
- * Questa classe è responsabile per la visualizzazione dell'interfaccia
+ * Questa classe è responsabile della visualizzazione dell'interfaccia
  * utente del gioco e per l'aggiornamento della View in base ai
  * cambiamenti nel Model.
+ * </p>
  * 
+ * <p>
  * Pattern adottati:
- * - Observer: per ricevere aggiornamenti dal modello.
+ * - MVC (Model-View-Controller): come parte della View per gestire
+ * l'interfaccia grafica della partita.
+ * - Observer: per ricevere aggiornamenti dal Model.
  * </p>
  */
 public class BlackjackView extends JFrame implements Observer {
@@ -40,7 +44,7 @@ public class BlackjackView extends JFrame implements Observer {
 
     /**
      * Costruttore che modella una nuova istanza di BlackjackView.
-     * Inizializza l'interfaccia utente del gioco, inclusi i pannelli per il Banco,
+     * Inizializza l'interfaccia utente del gioco, inclusi i JPanel
      * i giocatori, il profilo e i pulsanti di controllo.
      */
     public BlackjackView() {
@@ -107,10 +111,9 @@ public class BlackjackView extends JFrame implements Observer {
 
     /**
      * Metodo che aggiorna la View in base ai cambiamenti nel Model.
-     * Questo metodo viene chiamato quando il Model segnala un cambiamento.
      *
-     * @param o   L'oggetto Observable che ha segnalato il cambiamento
-     * @param arg Un argomento opzionale passato dall'Observable
+     * @param o   L'oggetto Observable che ha segnalato il cambiamento.
+     * @param arg Un argomento opzionale passato dall'Observable.
      */
     @Override
     public void update(Observable o, Object arg) {
@@ -118,12 +121,6 @@ public class BlackjackView extends JFrame implements Observer {
             BlackjackModel model = (BlackjackModel) o;
             updateDealerHand(model.getDealer());
             updatePlayerHands(model.getPlayers(), model.getCurrentPlayerIndex());
-
-            if (model.isBotOrDealerTurn()) {
-                statusLabel.setText("In attesa dei bot e del banco...");
-            } else {
-                statusLabel.setText("");
-            }
 
             if (arg != null && arg.equals("GAME_OVER")) {
                 String winnerMessage = model.getWinnerMessage();
@@ -137,9 +134,9 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Metodo che aggiorna la visualizzazione della mano del banco.
+     * Metodo che aggiorna la visualizzazione della mano del Banco.
      *
-     * @param dealer Il giocatore che rappresenta il banco
+     * @param dealer Il giocatore che rappresenta il Banco.
      */
     private void updateDealerHand(Player dealer) {
         dealerPanel.removeAll();
@@ -152,8 +149,8 @@ public class BlackjackView extends JFrame implements Observer {
     /**
      * Metodo che aggiorna la visualizzazione delle mani di tutti i giocatori.
      *
-     * @param players            La lista dei giocatori
-     * @param currentPlayerIndex L'indice del giocatore attuale
+     * @param players            La lista dei giocatori.
+     * @param currentPlayerIndex L'indice del giocatore attuale.
      */
     private void updatePlayerHands(List<Player> players, int currentPlayerIndex) {
         playerPanel.removeAll();
@@ -176,17 +173,11 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Metodo che crea un JPanel per un giocatore o per il banco.
-     * <p>
-     * Il JPanel contiene:
-     * - il nickname del giocatore o Banco se il campo isDealer è true.
-     * - le carte del giocatore o del Banco.
-     * - il valore delle carte in mano.
-     * </p>
+     * Metodo che crea un JPanel per i giocatori e per il Banco.
      * 
-     * @param player   Il giocatore o il banco
-     * @param isDealer True se il JPanel è per il banco, false altrimenti
-     * @return Un JPanel contenente le informazioni del giocatore
+     * @param player   Il giocatore o il banco.
+     * @param isDealer true se il JPanel è per il banco, false altrimenti.
+     * @return Un JPanel contenente le informazioni del giocatore.
      */
     private JPanel createPlayerInfoPanel(Player player, boolean isDealer) {
         JPanel panel = new JPanel();
@@ -219,15 +210,15 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Metodo che una JLabel per rappresentare una carta.
+     * Metodo che crea un JLabel per rappresentare una carta.
      * 
      * <p>
-     * Questo metodo cerca l'immagine corrispondente alla carta nel percorso,
-     * la ridimensiona alle dimensioni standard della carta
-     * e la applica a un JLabel.
+     * Questo metodo cerca l'immagine corrispondente alla carta nel percorso
+     * specificato, la ridimensiona per poter farla entrare nel JPanel del
+     * giocatore.
      * </p>
      * 
-     * @param card La carta da rappresentare
+     * @param card La carta da rappresentare.
      * @return Un JLabel contenente l'immagine ridimensionata della carta.
      *         Se l'immagine non viene trovata, ritorna un JLabel con una frase di
      *         errore.
@@ -241,7 +232,6 @@ public class BlackjackView extends JFrame implements Observer {
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
             return new JLabel(scaledIcon);
         } else {
-            System.err.println("Immagine non trovata per il percorso: " + imagePath);
             return new JLabel("Immagine non trovata");
         }
     }
@@ -249,7 +239,7 @@ public class BlackjackView extends JFrame implements Observer {
     /**
      * Metodo che aggiorna lo stato dei pulsanti di gioco.
      *
-     * @param enable True per abilitare i pulsanti, false per disabilitarli
+     * @param enable true per abilitare i pulsanti, false per disabilitarli.
      */
     private void updateButtons(boolean enable) {
         hitButton.setEnabled(enable);
@@ -259,7 +249,7 @@ public class BlackjackView extends JFrame implements Observer {
     /**
      * Getter che restituisce il pulsante "Pesca Carta".
      *
-     * @return Il JButton per l'azione "Pesca Carta"
+     * @return Il JButton per l'azione "Pesca Carta".
      */
     public JButton getHitButton() {
         return hitButton;
@@ -268,7 +258,7 @@ public class BlackjackView extends JFrame implements Observer {
     /**
      * Getter che restituisce il pulsante "Stai".
      *
-     * @return Il JButton per l'azione "Stai"
+     * @return Il JButton per l'azione "Stai".
      */
     public JButton getStandButton() {
         return standButton;

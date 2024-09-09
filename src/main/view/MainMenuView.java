@@ -15,6 +15,11 @@ import java.awt.*;
  * permettendo all'utente di iniziare una partita, visualizzare le
  * statistiche o tornare alla creazione di un profilo.
  * </p>
+ * 
+ * <p>
+ * Pattern adottati:
+ * - MVC (Model-View-Controller) come parte della View per visualizzare il menu
+ * principale.
  */
 public class MainMenuView extends JFrame {
     private UserProfile userProfile;

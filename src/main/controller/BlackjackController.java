@@ -8,17 +8,16 @@ import main.util.AudioManager;
 import javax.swing.JOptionPane;
 
 /**
- * La classe BlackjackController implementa il pattern MVC
- * (Model-View-Controller) gestendo la logica di controllo del gioco.
- * Fa interagire il modello del gioco ({@link BlackjackModel}), la
- * vista ({@link BlackjackView}),
- * e la riproduzione di file audio ({@link AudioManager}).
+ * La classe BlackjackController fa interagire il Model del gioco
+ * ({@link BlackjackModel}),
+ * la View ({@link BlackjackView}) e la riproduzione di file audio
+ * ({@link AudioManager}).
  * 
  * <p>
- * Questa classe implementa anche il pattern Singleton per garantire
- * un'unica istanza del controller.
- * Utilizza il pattern Observer attraverso l'interazione
- * con il Model e la View.
+ * Pattern utilizzati:
+ * - MVC (Model-View-Controller): per gestire la logica di controllo del gioco;
+ * - Singleton: per garantire un'unica istanza del controller;
+ * - Observer: attraverso l'interazione con il Model e la View.
  * </p>
  * 
  * @see BlackjackModel
@@ -41,9 +40,9 @@ public class BlackjackController {
      * Inoltre, gestisce l'audio utilizzando l'{@link AudioManager}.
      * </p>
      * 
-     * @param model    il modello del gioco Blackjack
-     * @param view     la vista associata al gioco Blackjack
-     * @param mainMenu il menu principale dell'applicazione
+     * @param model    Il modello del gioco Blackjack.
+     * @param view     La vista associata al gioco Blackjack.
+     * @param mainMenu Il menu principale dell'applicazione.
      */
     public BlackjackController(BlackjackModel model, BlackjackView view, MainMenuView mainMenu) {
         this.model = model;
@@ -53,7 +52,6 @@ public class BlackjackController {
 
         model.addObserver(view);
 
-        // Aggiunge gli Action Listener per i pulsanti "Pesca Carta" e "Stai"
         view.getHitButton().addActionListener(e -> hit());
         view.getStandButton().addActionListener(e -> stand());
 

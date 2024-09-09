@@ -28,14 +28,14 @@ public class Deck {
     }
 
     /**
-     * Getter che restituisce l'istanza singleton del mazzo.
+     * Getter che restituisce l'istanza Singleton del mazzo.
      * 
      * <p>
      * Se l'istanza non esiste, viene creata. Altrimenti, viene restituita
      * l'istanza esistente.
      * </p>
      * 
-     * @return l'unica istanza di Deck
+     * @return L'unica istanza di Deck.
      */
     public static Deck getInstance() {
         if (instance == null) {
@@ -45,7 +45,7 @@ public class Deck {
     }
 
     /**
-     * Metodo che inizializza il mazzo con tutte le carte.
+     * Metodo che inizializza il mazzo di carte.
      * 
      * <p>
      * Utilizza gli Stream per creare tutte le combinazioni possibili
@@ -77,7 +77,7 @@ public class Deck {
      * carta.
      * </p>
      * 
-     * @return la carta estratta
+     * @return La carta estratta.
      */
     public Card drawCard() {
         if (cards.isEmpty()) {

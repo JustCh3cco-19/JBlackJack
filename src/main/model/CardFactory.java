@@ -1,12 +1,12 @@
 package main.model;
 
 /**
- * Classe CardFactory per la creazione di oggetti {@link Card}.
+ * La classe CardFactory serve per la creazione di oggetti {@link Card}.
  * 
  * <p>
  * Pattern adottati:
- * - Factory Method: definisce un'interfaccia per creare un oggetto,
- * ma lascia alle sottoclassi decidere quale classe istanziare.
+ * - Factory Method: determina il tipo di carta da creare (Ace, Face o Numeric)
+ * basandosi sul rango fornito.
  * </p>
  */
 public class CardFactory {
@@ -14,16 +14,10 @@ public class CardFactory {
      * Metodo che crea e restituisce un oggetto {@link Card} basato sul seme e sul
      * rango forniti.
      * 
-     * <p>
-     * Pattern adottati:
-     * - Factory Method: determina il tipo di carta da creare (Asso, Figura o
-     * Numerica) basandosi sul rango fornito.
-     * </p>
-     *
-     * @param suit il seme della carta
-     * @param rank il rango della carta
-     * @return un'istanza di {@link Card} appropriata
-     * @throws IllegalArgumentException se il rango fornito non è valido
+     * @param suit Il seme della carta.
+     * @param rank Il rango della carta
+     * @return Un'istanza di {@link Card}.
+     * @throws IllegalArgumentException se il rango fornito non è valido.
      */
     public static Card createCard(String suit, String rank) {
         if (rank.equals("ace")) {
@@ -35,7 +29,7 @@ public class CardFactory {
                 int value = Integer.parseInt(rank);
                 return new NumericCard(suit, rank, value);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid rank: " + rank, e);
+                throw new IllegalArgumentException("Rango non valido: " + rank, e);
             }
         }
     }

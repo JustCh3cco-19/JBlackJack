@@ -1,21 +1,15 @@
 package main.model;
 
 /**
- * La classe AceCard rappresenta la carta Asso e implementa il pattern Strategy.
- * Implementa l'interfaccia {@link Card}, definendo il comportamento
- * specifico per la carta Asso,
- * in questo caso per comodità assumerà sempre il valore 11.
+ * La classe AceCard rappresenta la carta Asso.
+ * Implementa l'interfaccia {@link Card} e fornisce il comportamento
+ * specifico per la carta Ace, che ha un valore fisso di 11 in questa
+ * implementazione.
  * 
  * <p>
- * Questa classe è applica il pattern Strategy, dove diverse implementazioni
- * di {@link Card} possono fornire comportamenti diversi
- * per diversi tipi di carte.
- * </p>
- * 
- * <p>
- * Inoltre, AceCard fa parte del pattern Composite, dove singole carte (Leaf)
- * e collezioni di carte (Composite) implementano la stessa interfaccia
- * {@link Card}.
+ * Pattern utilizzati:
+ * - Composite: le singole carte (Leaf) che le collezioni di carte (Composite)
+ * implementano la stessa interfaccia {@link Card}.
  * </p>
  * 
  */
@@ -23,7 +17,7 @@ public class AceCard implements Card {
     private String suit;
 
     /**
-     * Costruttore AceCard che inizializza una carta Asso con il seme specificato.
+     * Costruttore che inizializza una carta Asso con il seme specificato.
      * 
      * @param suit Il seme della carta Asso.
      */
@@ -32,9 +26,10 @@ public class AceCard implements Card {
     }
 
     /**
-     * Getter che restituisce il valore dell'Asso.
+     * Getter che restituisce il valore della carta Asso.
      * 
-     * @return Il valore dell'Asso, fissato a 11 in questa implementazione.
+     * @return Il valore della carta Asso, che in questa implementazione è sempre
+     *         11.
      */
     @Override
     public int getValue() {
@@ -42,7 +37,7 @@ public class AceCard implements Card {
     }
 
     /**
-     * Getter che restituisce il seme dell'asso.
+     * Getter che restituisce il seme della carta Asso.
      * 
      * @return Il seme della carta Asso.
      */
@@ -52,9 +47,9 @@ public class AceCard implements Card {
     }
 
     /**
-     * Getter che restituisce il rango dell'Asso.
+     * Getter che restituisce il rango della carta Asso.
      * 
-     * @return Il rango della carta, che è sempre "ace" per questa classe.
+     * @return Il rango della carta, che è sempre "ace" in questa classe.
      */
     @Override
     public String getRank() {

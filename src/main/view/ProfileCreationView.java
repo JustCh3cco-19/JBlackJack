@@ -7,7 +7,13 @@ import java.awt.*;
 /**
  * La classe ProfileCreationView rappresenta la View per la creazione del
  * profilo utente.
- * Implementa il pattern MVC (Model-View-Controller) come parte della View.
+ * 
+ * <p>
+ * Pattern adottati:
+ * - MVC (Model-View-Controller): come parte della View per gestire
+ * l'interfaccia grafica della creazione del profilo utente;
+ * - Command: per poter creare il profilo utente.
+ * </p>
  */
 public class ProfileCreationView extends JFrame {
     private JTextField nicknameField;
@@ -15,10 +21,9 @@ public class ProfileCreationView extends JFrame {
     private UserProfile userProfile;
 
     /**
-     * Costruttore della classe ProfileCreationView.
-     * Inizializza la finestra e i suoi componenti.
+     * Costruttore che modella la finestra e i suoi componenti.
      * 
-     * @param userProfile Il profilo utente da creare o modificare.
+     * @param userProfile Il profilo utente da creare.
      */
     public ProfileCreationView(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -153,11 +158,6 @@ public class ProfileCreationView extends JFrame {
 
     /**
      * Metodo che crea o aggiorna il profilo utente con i dati inseriti.
-     * 
-     * <p>
-     * Pattern adottati:
-     * - Command: per eseguire l'azione di creazione del profilo.
-     * </p>
      */
     private void createProfile() {
         String nickname = nicknameField.getText();
@@ -184,7 +184,7 @@ public class ProfileCreationView extends JFrame {
     /**
      * Getter che restituisce il profilo utente creato o modificato.
      * 
-     * @return UserProfile il profilo utente.
+     * @return UserProfile che rappresenta il profilo utente.
      */
     public UserProfile getUserProfile() {
         return userProfile;

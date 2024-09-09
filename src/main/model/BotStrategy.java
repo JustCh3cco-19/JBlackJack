@@ -8,13 +8,13 @@ import java.util.List;
  * <p>
  * Pattern adottati:
  * - Strategy: permette di cambiare la strategia di gioco dei bot senza
- * modificare PlayerStrategy
+ * modificare PlayerStrategy.
  * </p>
  */
 public class BotStrategy implements PlayerStrategy {
 
     /**
-     * Determina se il bot vuole pescare un'altra carta.
+     * Metodo che determina se il bot vuole pescare un'altra carta.
      * 
      * <p>
      * Questa implementazione specifica del metodo wantsToHit definisce

@@ -7,7 +7,13 @@ import java.awt.*;
 /**
  * La classe StatisticsView rappresenta la View per visualizzare
  * le statistiche del profilo utente del giocatore.
- * Implementa il pattern MVC (Model-View-Controller) come parte della View.
+ * 
+ * <p>
+ * Pattern adottati:
+ * - MVC (Model-View-Controller): come parte della View per gestire il pannello
+ * delle statistiche del giocatore;
+ * - Composite: per organizzare i componenti dell'interfaccia.
+ * </p>
  */
 public class StatisticsView extends JFrame {
     private UserProfile userProfile;
@@ -37,11 +43,6 @@ public class StatisticsView extends JFrame {
 
     /**
      * Metodo che configura e aggiunge i componenti alla finestra.
-     * 
-     * <p>
-     * Pattern adottati:
-     * - Composite: per organizzare i componenti dell'interfaccia.
-     * </p>
      */
     private void setupComponents() {
         JPanel panel = createStatisticsPanel();

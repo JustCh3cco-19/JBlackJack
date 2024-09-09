@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * La classe Player rappresenta un giocatore nel gioco.
+ * La classe Player rappresenta un giocatore.
  * 
  * <p>
  * Questa classe gestisce la mano del giocatore, la sua strategia di
- * gioco, e fornisce metodi per interagire con il giocatore durante il gioco.
+ * gioco, e fornisce metodi per interagire in partita durante il gioco.
  * </p>
  */
 public class Player {
@@ -24,9 +24,9 @@ public class Player {
     /**
      * Costruttore che modella un nuovo giocatore.
      *
-     * @param name     il nome del giocatore
-     * @param strategy la strategia di gioco del giocatore umano
-     * @param isHuman  true se il giocatore è umano, false altrimenti
+     * @param name     Il nome del giocatore.
+     * @param strategy La strategia di gioco.
+     * @param isHuman  true se il giocatore è umano, false altrimenti.
      */
     public Player(String name, PlayerStrategy strategy, boolean isHuman) {
         this.name = name;
@@ -38,7 +38,7 @@ public class Player {
     /**
      * Metodo che aggiunge una carta alla mano del giocatore.
      *
-     * @param card la carta da aggiungere
+     * @param card La carta da aggiungere.
      */
     public void addCard(Card card) {
         hand.add(card);
@@ -47,7 +47,7 @@ public class Player {
     /**
      * Metodo che determina se il giocatore vuole chiedere un'altra carta.
      *
-     * @return true se il giocatore vuole un'altra carta, false altrimenti
+     * @return true se il giocatore vuole un'altra carta, false altrimenti.
      */
     public boolean wantsToHit() {
         return strategy.wantsToHit(hand);
@@ -63,7 +63,7 @@ public class Player {
     /**
      * Metodo che indica se il giocatore è umano o meno.
      *
-     * @return true se il giocatore è umano, false altrimenti
+     * @return true se il giocatore è umano, false altrimenti.
      */
     public boolean isHuman() {
         return isHuman;
@@ -88,7 +88,7 @@ public class Player {
     /**
      * Getter che restituisce la mano attuale del giocatore.
      *
-     * @return la lista di carte nella mano del giocatore
+     * @return La lista di carte nella mano del giocatore.
      */
     public List<Card> getHand() {
         return hand;
@@ -97,7 +97,7 @@ public class Player {
     /**
      * Getter che restituisce il nome del giocatore.
      *
-     * @return il nome del giocatore
+     * @return Il nome del giocatore.
      */
     public String getName() {
         return name;
@@ -107,7 +107,7 @@ public class Player {
      * Getter che restituisce il tipo di strategia di gioco
      * adottata dal singolo giocatore.
      *
-     * @return la strategia di gioco del giocatore
+     * @return La strategia di gioco del giocatore.
      */
     public PlayerStrategy getStrategy() {
         return strategy;

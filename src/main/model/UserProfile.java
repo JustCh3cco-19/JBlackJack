@@ -17,13 +17,14 @@ import java.io.IOException;
  * 
  * <p>
  * Pattern utilizzati:
- * - Singleton: questa classe potrebbe essere adattata
- * per seguire il pattern Singleton se si desidera avere un'unica istanza
- * di un profilo utente.
  * - DTO (Data Transfer Object): Questa classe agisce come un DTO,
  * incapsulando i dati dell'utente per il trasferimento tra il layer di
  * persistenza (memorizzazione e recupero dati) e il layer di business
- * logic (meccaniche di gioco).
+ * logic (meccaniche di gioco);
+ * - Serialization: serializzazione all'interno di un file txt per
+ * salvare l'oggetto in questione;
+ * - Deserialization: deserializzazione per caricare lo stato di un
+ * oggetto da un file txt.
  * </p>
  */
 public class UserProfile {
@@ -39,8 +40,8 @@ public class UserProfile {
      * Costruttore che modella un nuovo profilo utente con il nickname e
      * il percorso dell'avatar scelti dal giocatore.
      *
-     * @param nickname   Il nickname dell'utente
-     * @param avatarPath Il percorso dell'immagine avatar dell'utente
+     * @param nickname   Il nickname dell'utente.
+     * @param avatarPath Il percorso dell'immagine avatar dell'utente.
      */
     public UserProfile(String nickname, String avatarPath) {
         this.nickname = nickname;
@@ -79,7 +80,7 @@ public class UserProfile {
      * Metodo che aggiunge punti esperienza al profilo dell'utente e
      * controlla se è necessario salire di livello.
      *
-     * @param exp La quantità di punti esperienza da aggiungere
+     * @param exp La quantità di punti esperienza da aggiungere.
      */
     private void addExperience(int exp) {
         this.experience += exp;
@@ -98,7 +99,7 @@ public class UserProfile {
     /**
      * Metodo che calcola l'esperienza necessaria per il prossimo livello.
      *
-     * @return La quantità di esperienza necessaria per il prossimo livello
+     * @return La quantità di esperienza necessaria per il prossimo livello.
      */
     private int experienceNeededForNextLevel() {
         return this.level * 1000;
@@ -109,11 +110,6 @@ public class UserProfile {
      * nella cartella "profiles".
      * Il nome del file è basato sul nickname scelto dell'utente.
      * 
-     * <p>
-     * Pattern utilizzati:
-     * - Serialization: serializzazione all'interno di un file txt per
-     * salvare l'oggetto in questione.
-     * </p>
      */
     public void saveProfile() {
         File profilesDir = new File("profiles");
@@ -139,12 +135,6 @@ public class UserProfile {
      * Metodo che carica il profilo utente da un file di testo
      * nella cartella "profiles".
      * Il nome del file è basato sul nickname dell'utente.
-     * 
-     * <p>
-     * Pattern utilizzato:
-     * - Deserialization: deserializzazione per caricare lo stato di un
-     * oggetto da un file txt
-     * </p>
      */
     public void loadProfile() {
         String filePath = "profiles" + File.separator + nickname + "_profilo.txt";
@@ -164,7 +154,7 @@ public class UserProfile {
     /**
      * Getter che restituisce il nickname dell'utente.
      *
-     * @return Il nickname dell'utente
+     * @return Il nickname dell'utente.
      */
     public String getNickname() {
         return nickname;
@@ -173,7 +163,7 @@ public class UserProfile {
     /**
      * Getter che restituisce il percorso dell'immagine avatar dell'utente.
      *
-     * @return Il percorso dell'avatar
+     * @return Il percorso dell'immagine avatar.
      */
     public String getAvatarPath() {
         return avatarPath;
@@ -182,7 +172,7 @@ public class UserProfile {
     /**
      * Getter che restituisce il numero di partite giocate dall'utente.
      *
-     * @return Il numero di partite giocate
+     * @return Il numero di partite giocate.
      */
     public int getGamesPlayed() {
         return gamesPlayed;
@@ -191,7 +181,7 @@ public class UserProfile {
     /**
      * Getter che restituisce il numero di partite vinte dall'utente.
      *
-     * @return Il numero di partite vinte
+     * @return Il numero di partite vinte.
      */
     public int getGamesWon() {
         return gamesWon;
@@ -200,7 +190,7 @@ public class UserProfile {
     /**
      * Getter che restituisce il numero di partite perse dall'utente.
      *
-     * @return Il numero di partite perse
+     * @return Il numero di partite perse.
      */
     public int getGamesLost() {
         return gamesLost;
@@ -209,7 +199,7 @@ public class UserProfile {
     /**
      * Getter che restituisce il livello dell'utente.
      *
-     * @return Il livello dell'utente
+     * @return Il livello dell'utente.
      */
     public int getLevel() {
         return level;
@@ -218,10 +208,9 @@ public class UserProfile {
     /**
      * Getter che restituisce i punti esperienza dell'utente.
      *
-     * @return I punti esperienza dell'utente
+     * @return I punti esperienza dell'utente.
      */
     public int getExperience() {
         return experience;
     }
-
 }

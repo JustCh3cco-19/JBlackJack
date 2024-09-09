@@ -8,15 +8,19 @@ import java.util.stream.IntStream;
 
 /**
  * La classe BlackjackModel implementa la logica del gioco.
- * Gestisce il giocatore umano, i bot, il Banco, il mazzo di carte
- * e lo stato attuale del gioco.
- * Tramite il pattern Observer, consente alla View di essere notificata
- * ogni volta che avviene un cambiamento.
+ * 
+ * <p>
+ * Pattern utlizzati:
+ * - Observer: consente alla View di essere notificata ogni volta che avviene un
+ * cambiamento;
+ * - MVC (Model-View-Controller): per gestire i giocatori in partita, il mazzo
+ * di carte e lo stato della partita stessa.
+ * </p>
  * 
  * <p>
  * La logica include il mescolamento e la distribuzione delle carte, le
  * azioni "Pesca Carta" e "Stai", la gestione del turno del Banco e dei
- * bot, e il determinare a fine round del vincitore della partita.
+ * bot, e il determinare a fine round il vincitore della partita.
  * </p>
  */
 public class BlackjackModel extends Observable {
@@ -30,13 +34,11 @@ public class BlackjackModel extends Observable {
      * Costruttore della classe BlackjackModel.
      * 
      * <p>
-     * Inizializza i giocatori, il Banco, il mazzo di carte e carica il
-     * profilo utente per gestirne le statistiche.
-     * Il Banco viene aggiunto come giocatore separato, e il mazzo viene
-     * inizializzato e mescolato all'inizio del gioco.
+     * Inizializza il giocatore umano, i bot, il Banco, il mazzo di carte e carica
+     * il profilo utente del giocatore umano per gestirne le statistiche.
      * </p>
      * 
-     * @param userProfile il profilo utente del giocatore umano, compreso
+     * @param userProfile Il profilo utente del giocatore umano, compreso
      *                    di tutte le sue informazioni.
      */
     public BlackjackModel(UserProfile userProfile) {
@@ -52,8 +54,8 @@ public class BlackjackModel extends Observable {
     }
 
     /**
-     * Metodo che avvia il gioco mescolando il mazzo e distribuendo le
-     * due carte iniziali a tutti i giocatori e al Banco.
+     * Metodo che avvia il gioco, mescola il mazzo di carte e distribuisce le
+     * due carte iniziali a tutti i giocatori.
      */
     public void startGame() {
         deck.shuffle();
@@ -66,20 +68,20 @@ public class BlackjackModel extends Observable {
      * Metodo che distribuisce le carte iniziali ai giocatori e al Banco.
      * 
      * <p>
-     * Ogni giocatore, incluso il Banco, riceve due carte all'inizio del gioco.
+     * Ogni giocatore riceve due carte all'inizio del gioco.
      * </p>
      */
     private void dealInitialCards() {
         IntStream.range(0, 2).forEach(i -> {
             players.forEach(player -> player.addCard(deck.drawCard()));
-            dealer.addCard(deck.drawCard()); // Distribuisce carte anche al dealer
+            dealer.addCard(deck.drawCard());
         });
         setChanged();
         notifyObservers();
     }
 
     /**
-     * Esegue l'azione "Pesca Carta" per il giocatore corrente,
+     * Metodo che esegue l'azione "Pesca Carta" per il giocatore corrente,
      * aggiungendo una nuova carta alla sua mano.
      * 
      * <p>

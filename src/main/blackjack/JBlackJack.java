@@ -15,11 +15,13 @@ import main.model.UserProfile;
  * La GUI viene inizializzata sul thread di gestione degli eventi (Event
  * Dispatch Thread, EDT)
  * utilizzando {@link SwingUtilities#invokeLater(Runnable)} per garantire una
- * corretta gestione dei thread.
+ * corretta gestione dei thread stessi.
  * Viene mostrata prima la finestra di creazione del profilo e, una volta
  * chiusa,
  * l'applicazione passa al menu principale se viene creato un
  * {@link UserProfile} corretto.
+ * Dal menu principale si può accedere al gioco, visualizzare le statistiche
+ * del giocatore o tornare alla creazione del profilo.
  * </p>
  * 
  * @see ProfileCreationView

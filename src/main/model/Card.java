@@ -1,46 +1,50 @@
-/**
- * Questa interfacci rappresenta una carta da gioco.
- * 
- * Pattern adottati: 
- * - Template Method attraverso l'implementazione di un metodo di default * {@link #getImageFileName()}.
- * 
- * <p>
- * Il pattern "Template Method" definisce lo scheletro di un algoritmo in un metodo,
- * lasciando alcuni passi alle sottoclassi. In questo caso, il metodo {@link #getImageFileName()}
- * fornisce un'implementazione di default che può essere sovrascritta se necessario.
- * </p>
- */
 package main.model;
 
+/**
+ * Questa interfaccia rappresenta una carta da gioco.
+ * 
+ * <p>
+ * Pattern adottati:
+ * - Template Method: il metodo {@link #getImageFileName()} è implementato come
+ * default ed utilizza altri metodi dell'interfaccia per
+ * costruire il nome del file immagine associato alla carta.
+ * </p>
+ */
 public interface Card {
 
     /**
-     * Getter che restituisce il valore numerico della carta.
+     * Restituisce il valore numerico della carta.
      *
-     * @return il valore della carta
+     * @return Il valore numerico della carta.
      */
     int getValue();
 
     /**
-     * Getter che restituisce il seme della carta.
+     * Restituisce il seme della carta.
      *
-     * @return il seme della carta
+     * @return Il seme della carta (es. "hearts", "clubs", "spades", "diamonds").
      */
     String getSuit();
 
     /**
-     * Getter che restituisce il rango della carta (es. Asso, Re, Regina, ecc.).
+     * Restituisce il rango della carta (es. Asso, Re, Regina, ecc.).
      *
-     * @return il rango della carta
+     * @return Il rango della carta (es. "ace", "king", "queen", ecc.).
      */
     String getRank();
 
     /**
-     * Getter che restituisce il nome del file associato alla carta.
+     * Metodo di default che restituisce il nome del file immagine associato alla
+     * carta.
+     * <p>
+     * Questo metodo è implementato con una logica predefinita che costruisce il
+     * nome del file immagine utilizzando il rango e il seme della carta. Ad
+     * esempio, per un Asso di cuori, il nome del file sarà "ace_of_hearts.png".
+     * </p>
      *
-     * @return il nome del file immagine della carta
+     * @return Il nome del file immagine della carta.
      */
     default String getImageFileName() {
-        return getRank() + "*of*" + getSuit() + ".png";
+        return getRank() + "_of_" + getSuit() + ".png";
     }
 }

@@ -3,16 +3,17 @@ package main.model;
 import java.util.List;
 
 /**
- * La classe DealerStrategy implementa la strategia che adotterà il Banco.
+ * La classe DealerStrategy implementa la strategia per il Banco.
  * 
  * <p>
  * Pattern adottati:
- * - Strategy: definisce la strategia adottata dal banco.
+ * - Strategy: permette di cambiare la strategia di gioco del banco senza
+ * modificare PlayerStrategy.
  * </p>
  */
 public class DealerStrategy implements PlayerStrategy {
     /**
-     * Questo metodo determina se il mazziere vuole chiedere un'altra carta
+     * Metodo che determina se il banco vuole chiedere un'altra carta
      * basandosi sul valore della sua mano.
      * 
      * <p>
@@ -21,8 +22,8 @@ public class DealerStrategy implements PlayerStrategy {
      * chiedere un'altra carta se il valore totale della mano è inferiore a 17.
      * </p>
      * 
-     * @param hand La lista di carte nella mano del mazziere
-     * @return true se il mazziere vuole un'altra carta, false altrimenti
+     * @param hand Le carte nella mano del mazziere.
+     * @return true se il mazziere vuole un'altra carta, false altrimenti.
      */
     @Override
     public boolean wantsToHit(List<Card> hand) {

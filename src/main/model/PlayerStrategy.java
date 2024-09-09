@@ -3,7 +3,8 @@ package main.model;
 import java.util.List;
 
 /**
- * La classe PlayerStrategy definisce la strategia di gioco per il giocatore.
+ * L'interfaccia PlayerStrategy definisce la strategia di
+ * gioco per i giocatori.
  * 
  * <p>
  * Pattern adottati:
@@ -24,8 +25,8 @@ public interface PlayerStrategy {
      * per decidere quando chiedere un'altra carta.
      * </p>
      *
-     * @param hand Le carte attualmente nella mano del giocatore
-     * @return true se il giocatore vuole un'altra carta, false altrimenti
+     * @param hand Le carte attualmente nella mano del giocatore.
+     * @return true se il giocatore vuole un'altra carta, false altrimenti.
      */
     boolean wantsToHit(List<Card> hand);
 }
