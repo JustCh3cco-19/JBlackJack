@@ -168,9 +168,6 @@ public class BlackjackModel extends Observable {
         int humanHandValue = humanPlayer.getHandValue();
         int dealerHandValue = dealer.getHandValue();
 
-        System.out.println("Valore mano giocatore: " + humanHandValue);
-        System.out.println("Valore mano dealer: " + dealerHandValue);
-
         if (humanHandValue > 21) {
             userProfile.incrementGamesLost();
         } else if (dealerHandValue > 21) {
