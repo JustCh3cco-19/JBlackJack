@@ -3,7 +3,7 @@ package main.model;
 import java.util.*;
 
 /**
- * La classe Deck rappresenta un mazzo di carte.
+ * La classe Deck rappresenta il mazzo di carte.
  * 
  * <p>
  * Pattern adottati:
@@ -49,7 +49,7 @@ public class Deck {
      * 
      * <p>
      * Utilizza gli Stream per creare tutte le combinazioni possibili
-     * di semi e ranghi, creando le carte tramite CardFactory.
+     * di semi e ranghi, creando le carte tramite la classe CardFactory.
      * </p>
      */
     private void initializeDeck() {
@@ -73,8 +73,8 @@ public class Deck {
      * Metodo che estrae una carta dal mazzo.
      * 
      * <p>
-     * Se il mazzo è vuoto, viene reinizializzato e mescolato prima di estrarre una
-     * carta.
+     * Se il mazzo dovesse essere vuoto, viene reinizializzato e mescolato
+     * prima di estrarre una carta.
      * </p>
      * 
      * @return La carta estratta.
