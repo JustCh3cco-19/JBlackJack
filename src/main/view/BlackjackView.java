@@ -140,6 +140,7 @@ public class BlackjackView extends JFrame implements Observer {
      */
     private void updateDealerHand(Player dealer) {
         dealerPanel.removeAll();
+        dealerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         JPanel dealerInfoPanel = createPlayerInfoPanel(dealer, true);
         dealerPanel.add(dealerInfoPanel);
         dealerPanel.revalidate();
