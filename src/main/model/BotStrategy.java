@@ -3,7 +3,8 @@ package main.model;
 import java.util.List;
 
 /**
- * La classe BotStrategy implementa la strategia di gioco per i bot.
+ * La classe BotStrategy implementa PlayerStrategy e definisce la strategia di
+ * gioco per i bot.
  * 
  * <p>
  * Pattern adottati:

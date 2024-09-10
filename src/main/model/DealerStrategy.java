@@ -19,7 +19,7 @@ public class DealerStrategy implements PlayerStrategy {
      * <p>
      * Questa implementazione segue la regola standard del Blackjack per il
      * mazziere:
-     * chiedere un'altra carta se il valore totale della mano è inferiore a 17.
+     * pescare se il valore totale della mano è inferiore a 17.
      * </p>
      * 
      * @param hand Le carte nella mano del mazziere.

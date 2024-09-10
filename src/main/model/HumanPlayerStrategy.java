@@ -3,7 +3,8 @@ package main.model;
 import java.util.List;
 
 /**
- * La classe HumanPlayerStrategy implementa la strategia di gioco per il
+ * La classe HumanPlayerStrategy implementa PlayerStrategy e definisce la
+ * strategia di gioco per il
  * giocatore umano.
  * 
  * <p>
