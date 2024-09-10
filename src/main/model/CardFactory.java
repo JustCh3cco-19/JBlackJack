@@ -5,7 +5,8 @@ package main.model;
  * 
  * <p>
  * Pattern adottati:
- * - Factory Method: determina il tipo di carta da creare (Ace, Face o Numeric)
+ * - Factory Method: serve per determinare il tipo di carta da creare (Ace, Face
+ * o Numeric)
  * basandosi sul rango fornito.
  * </p>
  */

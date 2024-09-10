@@ -7,8 +7,8 @@ package main.model;
  * 
  * <p>
  * Pattern utilizzati:
- * - Composite: le singole carte (Leaf) che le collezioni di carte (Composite)
- * implementano la stessa interfaccia {@link Card}.
+ * - Composite: utilizzato in questo caso per trattare la singola carta, ossia
+ * la carta figura, implementando l'interfaccia {@link Card}.
  * </p>
  * 
  */

@@ -3,17 +3,18 @@ package main.model;
 /**
  * La classe AceCard rappresenta la carta Asso.
  * Implementa l'interfaccia {@link Card} e fornisce il comportamento
- * specifico per la carta Ace, che ha un valore fisso di 11 in questa
+ * specifico per la carta Asso, che ha un valore fisso di 11 in questa
  * implementazione.
  * 
  * <p>
  * Pattern utilizzati:
- * - Composite: le singole carte (Leaf) che le collezioni di carte (Composite)
- * implementano la stessa interfaccia {@link Card}.
+ * - Composite: utilizzato in questo caso per trattare la singola carta, ossia
+ * l'Asso, implementando l'interfaccia {@link Card}.
  * </p>
  * 
  */
 public class AceCard implements Card {
+    /** Il seme della carta */
     private String suit;
 
     /**
