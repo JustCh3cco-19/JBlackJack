@@ -28,7 +28,7 @@ public class MainMenuView extends JFrame {
      * Costruttore che modella una nuova istanza di MainMenuView.
      * 
      * <p>
-     * Inizializza l'interfaccia utente del menu principale e
+     * Inizializza l'interfaccia grafica del menu principale e
      * carica il profilo utente.
      * </p>
      * 

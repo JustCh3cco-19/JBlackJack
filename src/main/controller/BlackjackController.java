@@ -15,9 +15,10 @@ import javax.swing.JOptionPane;
  * 
  * <p>
  * Pattern utilizzati:
- * - MVC (Model-View-Controller): per gestire la logica di controllo del gioco;
+ * - MVC (Model-View-Controller): come parte del Controller per gestire la
+ * logica di controllo del gioco;
  * - Singleton: per garantire un'unica istanza del controller;
- * - Observer: attraverso l'interazione con il Model e la View.
+ * - Observer: per fare interagire il Model e la View.
  * </p>
  * 
  * @see BlackjackModel
@@ -35,7 +36,7 @@ public class BlackjackController {
      * Costruttore della classe BlackjackController.
      * 
      * <p>
-     * Inizializza il Model e la View, aggiunge gli Action Listener per i pulsanti
+     * Inizializza il Model e la View, implementa gli Action Listener per i pulsanti
      * "Pesca Carta" e "Stai", e avvia il gioco.
      * Inoltre, gestisce l'audio utilizzando l'{@link AudioManager}.
      * </p>
@@ -109,8 +110,9 @@ public class BlackjackController {
      * Metodo che gestisce il turno successivo.
      * 
      * <p>
-     * Se il gioco è finito, chiama il metodo {@link BlackjackModel#endRound()}.
-     * Se non è il turno del giocatore umano, avvia il turno del bot.
+     * Se il gioco è terminato, chiama il metodo {@link BlackjackModel#endRound()}.
+     * Se non dovesse essere il turno del giocatore umano, avvia il turno
+     * dei bot e del banco.
      * </p>
      */
     private void playNextTurn() {
@@ -122,11 +124,11 @@ public class BlackjackController {
     }
 
     /**
-     * Metodo che esegue il turno del bot in un thread separato.
+     * Metodo che esegue il turno del bot e del banco in un thread separato.
      * 
      * <p>
-     * Il bot attende 2 secondi tra le azioni per simulare un possibile ragionamento
-     * sul pescare la carta o stare.
+     * I bot e il banco attendono 2 secondi tra le azioni per simulare un possibile
+     * ragionamento sul pescare la carta o stare.
      * </p>
      */
     private void playBotTurn() {
@@ -150,7 +152,7 @@ public class BlackjackController {
     }
 
     /**
-     * Metodo che riavvia la partita, resettando il round corrente.
+     * Metodo che riavvia la partita, ripristinando il round corrente.
      * 
      * <p>
      * Questo metodo chiama il reset del round sul Model, permettendo di

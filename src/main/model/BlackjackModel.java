@@ -11,16 +11,16 @@ import java.util.stream.IntStream;
  * 
  * <p>
  * Pattern utlizzati:
+ * - MVC (Model-View-Controller): come parte del Model per gestire i giocatori
+ * in partita, il mazzo di carte e lo stato della partita stessa.
  * - Observer: consente alla View di essere notificata ogni volta che avviene un
- * cambiamento;
- * - MVC (Model-View-Controller): per gestire i giocatori in partita, il mazzo
- * di carte e lo stato della partita stessa.
+ * cambiamento di stato;
  * </p>
  * 
  * <p>
  * La logica include il mescolamento e la distribuzione delle carte, le
- * azioni "Pesca Carta" e "Stai", la gestione del turno del Banco e dei
- * bot, e il determinare a fine round il vincitore della partita.
+ * azioni "Pesca Carta" e "Stai", la gestione dei turni dei giocatori e il
+ * determinare a fine partita il vincitore.
  * </p>
  */
 public class BlackjackModel extends Observable {
@@ -262,7 +262,7 @@ public class BlackjackModel extends Observable {
      */
     public String getWinnerMessage() {
         if (dealer.getHandValue() > 21) {
-            return "Il Banco ha sballato. Tutti vincono, a meno di aver sballato.";
+            return "Il Banco ha sballato. Tutti vincono, a meno di aver superato 21.";
         } else {
             // Filtra solo i giocatori che non hanno sballato e
             // confrontali anche con il Banco

@@ -13,7 +13,7 @@ import java.util.Observer;
  * 
  * <p>
  * Questa classe è responsabile della visualizzazione dell'interfaccia
- * utente del gioco e per l'aggiornamento della View in base ai
+ * grafica del gioco e dell'aggiornamento della View in base ai
  * cambiamenti nel Model.
  * </p>
  * 
@@ -44,8 +44,8 @@ public class BlackjackView extends JFrame implements Observer {
 
     /**
      * Costruttore che modella una nuova istanza di BlackjackView.
-     * Inizializza l'interfaccia utente del gioco, inclusi i JPanel
-     * i giocatori, il profilo e i pulsanti di controllo.
+     * Inizializza l'interfaccia grafica del gioco, inclusi i JPanel per
+     * i giocatori e i pulsanti di controllo.
      */
     public BlackjackView() {
         setTitle("JBlackJack");
