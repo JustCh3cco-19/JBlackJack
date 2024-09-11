@@ -1,7 +1,7 @@
 package main.model;
 
 /**
- * Questa interfaccia rappresenta una carta da gioco.
+ * L'interfaccia Card rappresenta una carta da gioco.
  * 
  * <p>
  * Le classi che implementano questa interfaccia devono fornire le
