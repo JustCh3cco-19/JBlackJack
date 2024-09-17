@@ -4,4 +4,4 @@ BlackJack game made in Java for "Metodologie di Programmazione" exam at Universi
 
 # UML
 
-![UML](Diagramma\UML/JBlackJack.png)
+![UML](UML/JBlackJack.png)
