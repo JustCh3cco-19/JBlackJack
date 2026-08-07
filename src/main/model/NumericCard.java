@@ -1,34 +1,23 @@
 package main.model;
 
 /**
- * La classe NumericCard rappresenta una carta numerica.
- * Implementa l'interfaccia {@link Card} e fornisce il comportamento
- * specifico per la carta NumericCard.
- * 
- * <p>
- * Pattern utilizzati:
- * - Composite: utilizzato in questo caso per trattare la singola carta, ossia
- * la carta numerica, implementando l'interfaccia {@link Card}.
- * </p>
- * 
+ * Represents the {@code NumericCard} class.
  */
 public class NumericCard implements Card {
-    /** Il seme della carta */
+    /** Stores the suit value. */
     private String suit;
 
-    /** Il rango della carta (es. "2", "3", ..., "10") */
+    /** Stores the rank value. */
     private String rank;
 
-    /** Il valore numerico della carta */
+    /** Stores the value value. */
     private int value;
 
     /**
-     * Costruttore che modella una nuova carta numerica.
-     *
-     * @param suit  Il seme della carta.
-     * @param rank  Il rango della carta (deve essere una stringa rappresentante un
-     *              numero da 2 a 10).
-     * @param value Il valore numerico della carta.
+     * Creates a new {@code NumericCard} instance.
+     * @param suit the suit
+     * @param rank the rank
+     * @param value the value
      */
     public NumericCard(String suit, String rank, int value) {
         this.suit = suit;
@@ -37,9 +26,8 @@ public class NumericCard implements Card {
     }
 
     /**
-     * Getter che restituisce il valore numerico della carta.
-     *
-     * @return Il valore numerico della carta.
+     * Returns the value.
+     * @return the value
      */
     @Override
     public int getValue() {
@@ -47,9 +35,8 @@ public class NumericCard implements Card {
     }
 
     /**
-     * Getter che restituisce il seme della carta.
-     *
-     * @return Il seme della carta.
+     * Returns the suit.
+     * @return the suit
      */
     @Override
     public String getSuit() {
@@ -57,9 +44,8 @@ public class NumericCard implements Card {
     }
 
     /**
-     * Getter che restituisce il rango della carta.
-     *
-     * @return Il rango della carta.
+     * Returns the rank.
+     * @return the rank
      */
     @Override
     public String getRank() {

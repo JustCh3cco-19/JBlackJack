@@ -1,29 +1,19 @@
 package main.model;
 
 /**
- * La classe FaceCard rappresenta una carta figura (Jack, Queen, King).
- * Implementa l'interfaccia {@link Card} e fornisce il comportamento
- * specifico per la carta FaceCard, che ha un valore fisso di 10.
- * 
- * <p>
- * Pattern utilizzati:
- * - Composite: utilizzato in questo caso per trattare la singola carta, ossia
- * la carta figura, implementando l'interfaccia {@link Card}.
- * </p>
- * 
+ * Represents the {@code FaceCard} class.
  */
 public class FaceCard implements Card {
-    /** Il seme della carta */
+    /** Stores the suit value. */
     private String suit;
 
-    /** Il rango della carta (Jack, Queen, King) */
+    /** Stores the rank value. */
     private String rank;
 
     /**
-     * Costruttore che modella una nuova carta figura.
-     *
-     * @param suit Il seme della carta
-     * @param rank Il rango della carta (deve essere "jack", "queen", o "king")
+     * Creates a new {@code FaceCard} instance.
+     * @param suit the suit
+     * @param rank the rank
      */
     public FaceCard(String suit, String rank) {
         this.suit = suit;
@@ -31,12 +21,8 @@ public class FaceCard implements Card {
     }
 
     /**
-     * Getter che restituisce il valore della carta figura.
-     *
-     * Nelle regole standard, tutte le carte figura valgono 10 punti.
-     *
-     *
-     * @return Il valore della carta, che è sempre 10 per le carte figura.
+     * Returns the value.
+     * @return the value
      */
     @Override
     public int getValue() {
@@ -44,9 +30,8 @@ public class FaceCard implements Card {
     }
 
     /**
-     * Getter che restituisce il seme della carta.
-     *
-     * @return Il seme della carta.
+     * Returns the suit.
+     * @return the suit
      */
     @Override
     public String getSuit() {
@@ -54,9 +39,8 @@ public class FaceCard implements Card {
     }
 
     /**
-     * Getter che restituisce il rango della carta.
-     *
-     * @return Il rango della carta ("jack", "queen", o "king").
+     * Returns the rank.
+     * @return the rank
      */
     @Override
     public String getRank() {

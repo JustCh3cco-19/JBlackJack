@@ -9,6 +9,8 @@
 *.swp
 
 bin/
+target/
+out/
 
 *.classpath
 

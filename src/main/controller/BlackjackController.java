@@ -6,85 +6,50 @@ import main.view.MainMenuView;
 import main.util.AudioManager;
 
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 /**
- * La classe BlackjackController fa interagire il Model del gioco
- * ({@link BlackjackModel}),
- * la View ({@link BlackjackView}) e la riproduzione di file audio
- * ({@link AudioManager}).
- * 
- * <p>
- * Pattern utilizzati:
- * - MVC (Model-View-Controller): come parte del Controller per gestire la
- * logica di controllo del gioco;
- * - Singleton: per garantire un'unica istanza del controller;
- * - Observer: per fare interagire il Model e la View.
- * </p>
- * 
- * @see BlackjackModel
- * @see BlackjackView
- * @see AudioManager
- * @see MainMenuView
+ * Represents the {@code BlackjackController} class.
  */
 public class BlackjackController {
     private BlackjackModel model;
     private BlackjackView view;
     private AudioManager audioManager;
-    private static BlackjackController instance;
+    private Timer botTimer;
 
     /**
-     * Costruttore della classe BlackjackController.
-     * 
-     * <p>
-     * Inizializza il Model e la View, implementa gli Action Listener per i pulsanti
-     * "Pesca Carta" e "Stai", e avvia il gioco.
-     * Inoltre, gestisce l'audio utilizzando l'{@link AudioManager}.
-     * </p>
-     * 
-     * @param model    Il modello del gioco Blackjack.
-     * @param view     La vista associata al gioco Blackjack.
-     * @param mainMenu Il menu principale dell'applicazione.
+     * Creates a new {@code BlackjackController} instance.
+     * @param model the model
+     * @param view the view
+     * @param mainMenu the main menu
      */
     public BlackjackController(BlackjackModel model, BlackjackView view, MainMenuView mainMenu) {
         this.model = model;
         this.view = view;
         this.audioManager = AudioManager.getInstance();
-        instance = this;
-
-        model.addObserver(view);
+        model.addGameListener(view);
 
         view.getHitButton().addActionListener(e -> hit());
         view.getStandButton().addActionListener(e -> stand());
+        view.getRestartButton().addActionListener(e -> restartGame());
 
         startGame();
     }
 
     /**
-     * Metodo per avviare una nuova partita.
-     * 
-     * <p>
-     * Chiama il metodo per iniziare il gioco tramite il Model, riproduce
-     * il file audio di sottofondo per la partita e rende visibile la View.
-     * </p>
+     * Starts the game.
      */
     private void startGame() {
         model.startGame();
-        audioManager.play("src/main/resources/audio/game.wav");
+        audioManager.play("/audio/game.wav");
         view.setVisible(true);
     }
 
     /**
-     * Metodo che gestisce l'azione "Pesca Carta" del giocatore.
-     * 
-     * <p>
-     * Riproduce il suono di girare una carta e verifica se il giocatore ha
-     * sballato.
-     * Se il giocatore sballa, termina il suo turno chiamando il metodo
-     * {@link #stand()}.
-     * </p>
+     * Handles the hit action.
      */
     private void hit() {
-        audioManager.play("src/main/resources/audio/card_flip.wav");
+        audioManager.play("/audio/card_flip.wav");
         boolean busted = model.hit();
         if (busted) {
             JOptionPane.showMessageDialog(view, "Hai sballato! Il tuo turno è finito.", "Sballato",
@@ -94,26 +59,16 @@ public class BlackjackController {
     }
 
     /**
-     * Metodo che gestisce l'azione "Stai" del giocatore.
-     * 
-     * <p>
-     * Riproduce il suono della puntata di chip e termina il turno.
-     * </p>
+     * Handles the stand action.
      */
     private void stand() {
-        audioManager.play("src/main/resources/audio/chip_place.wav");
+        audioManager.play("/audio/chip_place.wav");
         model.stand();
         playNextTurn();
     }
 
     /**
-     * Metodo che gestisce il turno successivo.
-     * 
-     * <p>
-     * Se il gioco è terminato, chiama il metodo {@link BlackjackModel#endRound()}.
-     * Se non dovesse essere il turno del giocatore umano, avvia il turno
-     * dei bot e del banco.
-     * </p>
+     * Plays the next turn.
      */
     private void playNextTurn() {
         if (model.isGameOver()) {
@@ -124,51 +79,28 @@ public class BlackjackController {
     }
 
     /**
-     * Metodo che esegue il turno del bot e del banco in un thread separato.
-     * 
-     * <p>
-     * I bot e il banco attendono 2 secondi tra le azioni per simulare un possibile
-     * ragionamento sul pescare la carta o stare.
-     * </p>
+     * Plays the bot turn.
      */
     private void playBotTurn() {
-        new Thread(() -> {
-            while (!model.isGameOver() && !model.isHumanTurn()) {
-                try {
-                    Thread.sleep(2000);
-                    if (model.botWantsToHit()) {
-                        model.hit();
-                    } else {
-                        model.stand();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+        if (botTimer != null && botTimer.isRunning()) return;
+        botTimer = new Timer(700, e -> {
             if (model.isGameOver()) {
+                botTimer.stop();
                 model.endRound();
+            } else if (model.botWantsToHit()) {
+                if (model.hit()) model.stand();
+            } else {
+                model.stand();
             }
-        }).start();
+        });
+        botTimer.start();
     }
 
     /**
-     * Metodo che riavvia la partita, ripristinando il round corrente.
-     * 
-     * <p>
-     * Questo metodo chiama il reset del round sul Model, permettendo di
-     * iniziare una nuova mano.
-     * </p>
+     * Restarts the game.
      */
     public void restartGame() {
+        if (botTimer != null) botTimer.stop();
         model.resetRound();
-    }
-
-    /**
-     * Getter che restituisce l'istanza Singleton di {@link BlackjackController}.
-     * 
-     * @return l'istanza attuale del Controller.
-     */
-    public static BlackjackController getInstance() {
-        return instance;
     }
 }

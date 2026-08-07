@@ -1,32 +1,27 @@
 package main.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * La classe Player rappresenta un giocatore.
- * 
- * <p>
- * Questa classe gestisce la mano del giocatore, la sua strategia di
- * gioco, e fornisce metodi per interagire in partita durante il gioco.
- * </p>
+ * Represents the {@code Player} class.
  */
 public class Player {
-    /** La mano attuale del giocatore */
+    /** Stores the hand value. */
     private List<Card> hand;
-    /** Il nome del giocatore */
+    /** Stores the name value. */
     private String name;
-    /** La strategia di gioco del giocatore */
+    /** Stores the strategy value. */
     private PlayerStrategy strategy;
-    /** Indica se il giocatore è umano o meno */
+    /** Stores the is human value. */
     private boolean isHuman;
 
     /**
-     * Costruttore che modella un nuovo giocatore.
-     *
-     * @param name     Il nome del giocatore.
-     * @param strategy La strategia di gioco.
-     * @param isHuman  true se il giocatore è umano, false altrimenti.
+     * Creates a new {@code Player} instance.
+     * @param name the name
+     * @param strategy the strategy
+     * @param isHuman the is human
      */
     public Player(String name, PlayerStrategy strategy, boolean isHuman) {
         this.name = name;
@@ -36,78 +31,68 @@ public class Player {
     }
 
     /**
-     * Metodo che aggiunge una carta alla mano del giocatore.
-     *
-     * @param card La carta da aggiungere.
+     * Adds the card.
+     * @param card the card
      */
     public void addCard(Card card) {
         hand.add(card);
     }
 
     /**
-     * Metodo che determina se il giocatore vuole chiedere un'altra carta.
-     *
-     * @return true se il giocatore vuole un'altra carta, false altrimenti.
+     * Determines whether hit.
+     * @return the operation result
      */
     public boolean wantsToHit() {
         return strategy.wantsToHit(hand);
     }
 
     /**
-     * Metodo che rimuove tutte le carte dalla mano del giocatore.
+     * Clears the hand.
      */
     public void clearHand() {
         hand.clear();
     }
 
     /**
-     * Metodo che indica se il giocatore è umano o meno.
-     *
-     * @return true se il giocatore è umano, false altrimenti.
+     * Returns whether human.
+     * @return whether human
      */
     public boolean isHuman() {
         return isHuman;
     }
 
     /**
-     * Getter che restituisce il valore totale della mano del giocatore.
-     * 
-     * <p>
-     * Una nota importante è che ,in questa implementazione, l'Asso vale
-     * sempre 11 punti indipendentemente dal valore totale della mano.
-     * </p>
-     *
-     * @return il valore totale della mano
+     * Returns the hand value.
+     * @return the hand value
      */
     public int getHandValue() {
-        return hand.stream()
-                .mapToInt(card -> card.getRank().equals("ace") ? 11 : card.getValue())
-                .sum();
+        int value = hand.stream().mapToInt(Card::getValue).sum();
+        long aces = hand.stream().filter(card -> "ace".equals(card.getRank())).count();
+        while (value > 21 && aces-- > 0) {
+            value -= 10;
+        }
+        return value;
     }
 
     /**
-     * Getter che restituisce la mano attuale del giocatore.
-     *
-     * @return La lista di carte nella mano del giocatore.
+     * Returns the hand.
+     * @return the hand
      */
     public List<Card> getHand() {
-        return hand;
+        return Collections.unmodifiableList(hand);
     }
 
     /**
-     * Getter che restituisce il nome del giocatore.
-     *
-     * @return Il nome del giocatore.
+     * Returns the name.
+     * @return the name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Getter che restituisce il tipo di strategia di gioco
-     * adottata dal singolo giocatore.
-     *
-     * @return La strategia di gioco del giocatore.
+     * Returns the strategy.
+     * @return the strategy
      */
     public PlayerStrategy getStrategy() {
         return strategy;

@@ -3,54 +3,22 @@ package main.model;
 import java.util.*;
 
 /**
- * La classe Deck rappresenta il mazzo di carte.
- * 
- * <p>
- * Pattern adottati:
- * - Singleton: serve ad assicurare che esista una sola istanza del mazzo
- * durante l'esecuzione del gioco.
- * </p>
+ * Represents the {@code Deck} class.
  */
 
 public class Deck {
-    /** Istanza della classe Deck */
-    private static Deck instance;
-
-    /** Lista di carte nel mazzo */
+    /** Stores the cards value. */
     private List<Card> cards;
 
     /**
-     * Costruttore privato per prevenire l'istanziazione diretta.
-     * Inizializza il mazzo di carte.
+     * Creates a new {@code Deck} instance.
      */
-    private Deck() {
+    public Deck() {
         initializeDeck();
     }
 
     /**
-     * Getter che restituisce l'istanza Singleton del mazzo.
-     * 
-     * <p>
-     * Se l'istanza non esiste, viene creata. Altrimenti, viene restituita
-     * l'istanza esistente.
-     * </p>
-     * 
-     * @return L'unica istanza di Deck.
-     */
-    public static Deck getInstance() {
-        if (instance == null) {
-            instance = new Deck();
-        }
-        return instance;
-    }
-
-    /**
-     * Metodo che inizializza il mazzo di carte.
-     * 
-     * <p>
-     * Utilizza gli Stream per creare tutte le combinazioni possibili
-     * di semi e ranghi, creando le carte tramite la classe CardFactory.
-     * </p>
+     * Initializes the deck.
      */
     private void initializeDeck() {
         cards = new ArrayList<>();
@@ -63,21 +31,23 @@ public class Deck {
     }
 
     /**
-     * Metodo che mescola le carte nel mazzo.
+     * Shuffles the cards in the deck.
      */
     public void shuffle() {
         Collections.shuffle(cards);
     }
 
     /**
-     * Metodo che estrae una carta dal mazzo.
-     * 
-     * <p>
-     * Se il mazzo dovesse essere vuoto, viene reinizializzato e mescolato
-     * prima di estrarre una carta.
-     * </p>
-     * 
-     * @return La carta estratta.
+     * Performs the {@code reset} operation.
+     */
+    public void reset() {
+        initializeDeck();
+        shuffle();
+    }
+
+    /**
+     * Draws a card from the deck.
+     * @return the operation result
      */
     public Card drawCard() {
         if (cards.isEmpty()) {

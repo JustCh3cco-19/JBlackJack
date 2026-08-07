@@ -5,25 +5,15 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * La classe StatisticsView rappresenta la View per visualizzare
- * le statistiche del profilo utente del giocatore.
- * 
- * <p>
- * Pattern adottati:
- * - MVC (Model-View-Controller): come parte della View per gestire il pannello
- * delle statistiche del giocatore;
- * - Composite: per organizzare i componenti dell'interfaccia.
- * </p>
+ * Represents the {@code StatisticsView} class.
  */
 public class StatisticsView extends JFrame {
+    private static final long serialVersionUID = 1L;
     private UserProfile userProfile;
 
     /**
-     * Costruttore che modella la classe StatisticsView.
-     * Inizializza la finestra e visualizza le statistiche del giocatore.
-     *
-     * @param userProfile Il profilo utente contenente le statistiche da
-     *                    visualizzare.
+     * Creates a new {@code StatisticsView} instance.
+     * @param userProfile the user profile
      */
     public StatisticsView(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -33,7 +23,7 @@ public class StatisticsView extends JFrame {
     }
 
     /**
-     * Metodo che inizializza le proprietà base della finestra.
+     * Initializes the frame.
      */
     private void initializeFrame() {
         setTitle("Statistiche Giocatore");
@@ -42,7 +32,7 @@ public class StatisticsView extends JFrame {
     }
 
     /**
-     * Metodo che configura e aggiunge i componenti alla finestra.
+     * Configures the components.
      */
     private void setupComponents() {
         JPanel panel = createStatisticsPanel();
@@ -53,9 +43,8 @@ public class StatisticsView extends JFrame {
     }
 
     /**
-     * Metodo che crea il JPanel contenente le statistiche del giocatore.
-     *
-     * @return JPanel contenente le etichette con le statistiche.
+     * Creates the statistics panel.
+     * @return the operation result
      */
     private JPanel createStatisticsPanel() {
         JPanel panel = new JPanel(new GridLayout(6, 1));
@@ -69,9 +58,8 @@ public class StatisticsView extends JFrame {
     }
 
     /**
-     * Metodo che crea il pulsante di chiusura della finestra.
-     *
-     * @return JButton configurato per chiudere la finestra.
+     * Creates the close button.
+     * @return the operation result
      */
     private JButton createCloseButton() {
         JButton closeButton = new JButton("Chiudi");

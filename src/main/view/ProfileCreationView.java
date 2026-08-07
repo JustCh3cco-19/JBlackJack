@@ -5,25 +5,17 @@ import main.model.UserProfile;
 import java.awt.*;
 
 /**
- * La classe ProfileCreationView rappresenta la View per la creazione del
- * profilo utente.
- * 
- * <p>
- * Pattern adottati:
- * - MVC (Model-View-Controller): come parte della View per gestire
- * l'interfaccia grafica della creazione del profilo utente;
- * - Composite: organizza i componenti dell'interfaccia utente.
- * </p>
+ * Represents the {@code ProfileCreationView} class.
  */
 public class ProfileCreationView extends JFrame {
+    private static final long serialVersionUID = 1L;
     private JTextField nicknameField;
     private JComboBox<ImageIcon> avatarSelection;
     private UserProfile userProfile;
 
     /**
-     * Costruttore che modella la finestra e i suoi componenti.
-     * 
-     * @param userProfile Il profilo utente da creare.
+     * Creates a new {@code ProfileCreationView} instance.
+     * @param userProfile the user profile
      */
     public ProfileCreationView(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -34,7 +26,7 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che inizializza le proprietà base della finestra.
+     * Initializes the frame.
      */
     private void initializeFrame() {
         setTitle("Creazione Profilo");
@@ -45,8 +37,7 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che configura i pannelli principali della finestra utilizzando
-     * GridBagLayout.
+     * Configures the panels.
      */
     private void setupPanels() {
         setLayout(new GridBagLayout());
@@ -77,9 +68,8 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che crea il JPanel per l'inserimento del nickname.
-     * 
-     * @return JPanel contenente il campo di input per il nickname.
+     * Creates the nickname panel.
+     * @return the operation result
      */
     private JPanel createNicknamePanel() {
         JPanel nicknamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -93,9 +83,8 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che crea il pannello per la selezione dell'avatar.
-     * 
-     * @return JPanel contenente la JComboBox per la selezione dell'avatar.
+     * Creates the avatar panel.
+     * @return the operation result
      */
     private JPanel createAvatarPanel() {
         JPanel avatarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -111,14 +100,14 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che aggiunge un avatar alla JComboBox di selezione.
-     * 
-     * @param fileName Il nome del file dell'avatar da aggiungere.
+     * Adds the avatar.
+     * @param fileName the file name
      */
     private void addAvatar(String fileName) {
-        ImageIcon icon = new ImageIcon("src/main/resources/images/avatars/" + fileName);
+        java.net.URL resource = getClass().getResource("/images/avatars/" + fileName);
+        if (resource == null) return;
+        ImageIcon icon = new ImageIcon(resource);
         if (icon.getImageLoadStatus() != MediaTracker.COMPLETE) {
-            System.out.println("Errore nel caricamento dell'immagine: " + fileName);
             return;
         }
         ImageIcon resizedIcon = resizeIcon(icon, 150, 150);
@@ -126,9 +115,8 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che crea il bottone di conferma per la creazione del profilo.
-     * 
-     * @return JButton configurato per la conferma.
+     * Creates the confirm button.
+     * @return the operation result
      */
     private JButton createConfirmButton() {
         JButton confirmButton = new JButton("Accedi");
@@ -138,12 +126,11 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che ridimensiona un'icona alle dimensioni specificate.
-     * 
-     * @param icon   L'icona da ridimensionare.
-     * @param width  La larghezza desiderata.
-     * @param height L'altezza desiderata.
-     * @return ImageIcon ridimensionata.
+     * Performs the {@code resizeIcon} operation.
+     * @param icon the icon
+     * @param width the width
+     * @param height the height
+     * @return the operation result
      */
     private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
         Image img = icon.getImage();
@@ -152,22 +139,29 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Metodo che crea o aggiorna il profilo utente con i dati inseriti.
+     * Creates the profile.
      */
     private void createProfile() {
-        String nickname = nicknameField.getText();
+        String nickname = nicknameField.getText().trim();
+        if (!UserProfile.isValidNickname(nickname)) {
+            JOptionPane.showMessageDialog(this,
+                    "Usa da 1 a 24 lettere, numeri, trattini o underscore.",
+                    "Nickname non valido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         ImageIcon selectedAvatar = (ImageIcon) avatarSelection.getSelectedItem();
-        String avatarPath = selectedAvatar.getDescription();
+        String avatarPath = selectedAvatar == null ? "" : selectedAvatar.getDescription();
 
         userProfile = new UserProfile(nickname, avatarPath);
         userProfile.loadProfile();
+        userProfile.saveProfile();
 
         dispose();
         new MainMenuView(userProfile).setVisible(true);
     }
 
     /**
-     * Metodo che carica gli avatar presenti nella JComboBox di selezione.
+     * Loads the avatars.
      */
     private void loadAvatars() {
         String[] avatarFiles = { "CharlesLeclerc.png", "LewisHamilton.png", "KimiRaikkonen.png", "MaxVerstappen.png" };
@@ -177,9 +171,8 @@ public class ProfileCreationView extends JFrame {
     }
 
     /**
-     * Getter che restituisce il profilo utente creato o modificato.
-     * 
-     * @return UserProfile che rappresenta il profilo utente.
+     * Returns the user profile.
+     * @return the user profile
      */
     public UserProfile getUserProfile() {
         return userProfile;

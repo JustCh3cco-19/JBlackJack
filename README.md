@@ -1,47 +1,92 @@
 # JBlackJack
 
-JBlackJack is a Blackjack card game built in Java. This project was developed for the Software Engineering Methods exam at the University of Rome "La Sapienza". [cite_start]It features a graphical user interface built with **Java Swing**  [cite_start]and implements various design patterns for a modular and extensible structure.
+A desktop Blackjack game written in Java 17 and Swing. The player competes
+against the dealer alongside two bots, can save a local profile, and review
+their game statistics.
 
----
+## Features
 
-## 📋 Features
+- core Blackjack rules, including handling aces as either 1 or 11;
+- dealer hole card hidden until the end of the round;
+- bots and dealer powered by replaceable strategies;
+- persistent profiles with validated nicknames and atomic saving;
+- responsive Swing interface with updates performed on the Event Dispatch Thread;
+- optional audio and images: the game remains usable when assets are unavailable;
+- JUnit 5 tests and an automated GitHub Actions build.
 
-* **User Profiles**: Players can create a profile by choosing a nickname and an avatar. [cite_start]Player statistics, such as games played, wins, losses, level, and experience, are tracked and can be viewed.
-* **Game Logic**: The game follows standard Blackjack rules, where the player competes against the house. [cite_start]It includes one human player, two bot players, and the dealer.
-* **Progression System**: Players start at level zero and earn 100 experience points for each win. [cite_start]To advance to the next level, a player needs to accumulate points equal to their current level multiplied by 1000.
-* **Audio Feedback**: The game includes background music and sound effects for actions like drawing a card or standing.
+## Requirements
 
----
+- JDK 17 or newer;
+- Maven 3.9 or newer.
 
-## 🛠️ Getting Started
+## Running the application
 
-Follow these instructions to compile and run the project.
+```bash
+mvn clean test
+mvn exec:java
+```
 
-### Prerequisites
+Alternatively, compile the application without Maven:
 
-* Java Development Kit (JDK)
+```bash
+mkdir -p out
+javac -d out $(find src/main -name '*.java')
+java -cp out:src/main/resources main.blackjack.JBlackJack
+```
 
-### Compilation and Execution
+## Image and audio assets
 
-1.  **Navigate to the source directory**:
-    Open your terminal and change the directory to where your `.java` files are located. Assuming your package structure is `main/blackjack`, you would navigate to the directory containing the `main` folder.
+Third-party assets are not included in the repository for licensing reasons.
+The game displays textual card names and remains silent when these files are
+not available. Custom assets can be placed at the following paths:
 
-2.  **Compile the project**:
-    Run the following command to compile the Java source files.
+```text
+src/main/resources/images/cards/<rank>_of_<suit>.png
+src/main/resources/images/avatars/<name>.png
+src/main/resources/audio/game.wav
+src/main/resources/audio/card_flip.wav
+src/main/resources/audio/chip_place.wav
+```
 
-    ```bash
-    javac -d . main/blackjack/JBlackJack.java
-    ```
+Ranks and suits use English names, for example `ace_of_hearts.png`.
 
-3.  **Run the application**:
-    After successful compilation, run the main class with this command.
+## Project structure
 
-    ```bash
-    java main.blackjack.JBlackJack
-    ```
+```text
+src/main/blackjack    application entry point
+src/main/model        game rules and domain model
+src/main/controller   UI and game coordination
+src/main/view         Swing windows
+src/main/util         optional services
+src/test/java         automated tests
+```
 
----
+Profiles are saved locally in the `profiles/` directory and are not tracked by
+Git. Project documentation is available in `javadoc/`, `UML/`, and `report/`.
 
-## 💡 Project Snippet
+## Technical report
 
-JBlackJack is a simple Blackjack game developed in Java Swing. [cite_start]It allows users to create a profile, play against AI opponents, and track their statistics. [cite_start]The project showcases the use of several design patterns, including MVC, Singleton, and Factory Method, to create a well-structured and maintainable application.
+The English technical report has a dedicated LaTeX source and Makefile. Build
+it from the repository root with:
+
+```bash
+make -C report
+```
+
+The generated PDF is written to `report/build/JBlackJack-report.pdf`.
+Use `make -C report clean` to remove auxiliary LaTeX files or
+`make -C report distclean` to remove the generated PDF as well.
+
+The report currently includes the existing `UML/JBlackJack.png` diagram; the
+diagram is not regenerated automatically from the Java source code.
+
+## Development
+
+Run the following command before submitting a change:
+
+```bash
+mvn verify
+```
+
+Game rules must remain in the `model` package. The UI must not directly mutate
+hands, decks, or player statistics.

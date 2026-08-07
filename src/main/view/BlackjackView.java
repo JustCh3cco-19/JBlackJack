@@ -1,30 +1,15 @@
 package main.view;
 
-import main.controller.BlackjackController;
 import main.model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
- * La classe BlackjackView rappresenta la View del gioco.
- * 
- * <p>
- * Questa classe è responsabile della visualizzazione dell'interfaccia
- * grafica del gioco e dell'aggiornamento della View in base ai
- * cambiamenti nel Model.
- * </p>
- * 
- * <p>
- * Pattern adottati:
- * - MVC (Model-View-Controller): come parte della View per gestire
- * l'interfaccia grafica della partita.
- * - Observer: per ricevere aggiornamenti dal Model.
- * </p>
+ * Represents the {@code BlackjackView} class.
  */
-public class BlackjackView extends JFrame implements Observer {
+public class BlackjackView extends JFrame implements GameListener {
+    private static final long serialVersionUID = 1L;
     private JPanel gamePanel;
     private JPanel playerPanel;
     private JPanel dealerPanel;
@@ -43,14 +28,14 @@ public class BlackjackView extends JFrame implements Observer {
     private static final int CARD_SPACING = 20;
 
     /**
-     * Costruttore che modella una nuova istanza di BlackjackView.
-     * Inizializza l'interfaccia grafica del gioco, inclusi i JPanel per
-     * i giocatori e i pulsanti di controllo.
+     * Creates a new {@code BlackjackView} instance.
      */
     public BlackjackView() {
         setTitle("JBlackJack");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1920, 1080);
+        setMinimumSize(new Dimension(900, 650));
+        setSize(1200, 800);
+        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         Color greenColor = new Color(0, 128, 0);
@@ -63,17 +48,21 @@ public class BlackjackView extends JFrame implements Observer {
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-        gamePanel.setLayout(null);
+        gamePanel.setLayout(new BorderLayout(10, 30));
 
         dealerPanel = new JPanel();
         dealerPanel.setOpaque(false);
-        dealerPanel.setBounds(760, 50, DEALER_PANEL_WIDTH, DEALER_PANEL_HEIGHT);
-        gamePanel.add(dealerPanel);
+        dealerPanel.setPreferredSize(new Dimension(DEALER_PANEL_WIDTH, DEALER_PANEL_HEIGHT));
+        gamePanel.add(dealerPanel, BorderLayout.NORTH);
 
-        playerPanel = new JPanel(null);
+        playerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, CARD_SPACING, 0));
         playerPanel.setOpaque(false);
-        playerPanel.setBounds(50, 400, 1820, PLAYER_PANEL_HEIGHT);
-        gamePanel.add(playerPanel);
+        playerPanel.setPreferredSize(new Dimension(900, PLAYER_PANEL_HEIGHT));
+        JScrollPane playersScrollPane = new JScrollPane(playerPanel);
+        playersScrollPane.setOpaque(false);
+        playersScrollPane.getViewport().setOpaque(false);
+        playersScrollPane.setBorder(null);
+        gamePanel.add(playersScrollPane, BorderLayout.CENTER);
 
         profilePanel = new JPanel();
         profilePanel.setBackground(greenColor);
@@ -103,26 +92,19 @@ public class BlackjackView extends JFrame implements Observer {
         add(profilePanel, BorderLayout.EAST);
         add(statusLabel, BorderLayout.NORTH);
 
-        restartButton.addActionListener(e -> {
-            BlackjackController.getInstance().restartGame();
-            restartButton.setEnabled(false);
-        });
     }
 
     /**
-     * Metodo che aggiorna la View in base ai cambiamenti nel Model.
-     *
-     * @param o   L'oggetto Observable che ha segnalato il cambiamento.
-     * @param arg Un argomento opzionale passato dall'Observable.
+     * Performs the {@code gameChanged} operation.
+     * @param model the model
+     * @param event the event
      */
     @Override
-    public void update(Observable o, Object arg) {
-        if (o instanceof BlackjackModel) {
-            BlackjackModel model = (BlackjackModel) o;
-            updateDealerHand(model.getDealer());
+    public void gameChanged(BlackjackModel model, GameEvent event) {
+            updateDealerHand(model.getDealer(), event != GameEvent.GAME_OVER);
             updatePlayerHands(model.getPlayers(), model.getCurrentPlayerIndex());
 
-            if (arg != null && arg.equals("GAME_OVER")) {
+            if (event == GameEvent.GAME_OVER) {
                 String winnerMessage = model.getWinnerMessage();
                 JOptionPane.showMessageDialog(this, winnerMessage, "Partita Terminata",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -130,41 +112,36 @@ public class BlackjackView extends JFrame implements Observer {
             }
 
             updateButtons(model.getCurrentPlayerIndex() == 0 && !model.isBotOrDealerTurn());
-        }
     }
 
     /**
-     * Metodo che aggiorna la visualizzazione della mano del Banco.
-     *
-     * @param dealer Il giocatore che rappresenta il Banco.
+     * Updates the dealer hand.
+     * @param dealer the dealer
+     * @param hideHoleCard the hide hole card
      */
-    private void updateDealerHand(Player dealer) {
+    private void updateDealerHand(Player dealer, boolean hideHoleCard) {
         dealerPanel.removeAll();
         dealerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JPanel dealerInfoPanel = createPlayerInfoPanel(dealer, true);
+        JPanel dealerInfoPanel = createPlayerInfoPanel(dealer, true, hideHoleCard);
         dealerPanel.add(dealerInfoPanel);
         dealerPanel.revalidate();
         dealerPanel.repaint();
     }
 
     /**
-     * Metodo che aggiorna la visualizzazione delle mani di tutti i giocatori.
-     *
-     * @param players            La lista dei giocatori.
-     * @param currentPlayerIndex L'indice del giocatore attuale.
+     * Updates the player hands.
+     * @param players the players
+     * @param currentPlayerIndex the current player index
      */
     private void updatePlayerHands(List<Player> players, int currentPlayerIndex) {
         playerPanel.removeAll();
 
-        int totalWidth = players.size() * (CARD_WIDTH * 5 + CARD_SPACING * 4);
-        int startX = (playerPanel.getWidth() - totalWidth) / 2;
-
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            JPanel playerInfoPanel = createPlayerInfoPanel(player, false);
+            JPanel playerInfoPanel = createPlayerInfoPanel(player, false, false);
 
-            int x = startX + i * (CARD_WIDTH * 5 + CARD_SPACING * 4);
-            playerInfoPanel.setBounds(x, 0, CARD_WIDTH * 5 + CARD_SPACING * 4, PLAYER_PANEL_HEIGHT);
+            playerInfoPanel.setPreferredSize(new Dimension(CARD_WIDTH * 5 + CARD_SPACING * 4,
+                    PLAYER_PANEL_HEIGHT));
 
             playerPanel.add(playerInfoPanel);
         }
@@ -174,13 +151,13 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Metodo che crea un JPanel per i giocatori e per il Banco.
-     * 
-     * @param player   Il giocatore o il banco.
-     * @param isDealer true se il JPanel è per il banco, false altrimenti.
-     * @return Un JPanel contenente le informazioni del giocatore.
+     * Creates the player info panel.
+     * @param player the player
+     * @param isDealer the is dealer
+     * @param hideHoleCard the hide hole card
+     * @return the operation result
      */
-    private JPanel createPlayerInfoPanel(Player player, boolean isDealer) {
+    private JPanel createPlayerInfoPanel(Player player, boolean isDealer, boolean hideHoleCard) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(false);
@@ -194,15 +171,17 @@ public class BlackjackView extends JFrame implements Observer {
         JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, CARD_SPACING, 0));
         cardsPanel.setOpaque(false);
 
-        for (Card card : player.getHand()) {
-            JLabel cardLabel = createCardLabel(card);
+        for (int i = 0; i < player.getHand().size(); i++) {
+            Card card = player.getHand().get(i);
+            JLabel cardLabel = hideHoleCard && i == 1 ? new JLabel("Carta coperta") : createCardLabel(card);
+            cardLabel.setForeground(Color.WHITE);
             cardsPanel.add(cardLabel);
         }
 
         panel.add(cardsPanel);
 
         panel.add(Box.createVerticalStrut(10));
-        JLabel valueLabel = new JLabel("Valore: " + player.getHandValue());
+        JLabel valueLabel = new JLabel(hideHoleCard ? "Valore: ?" : "Valore: " + player.getHandValue());
         valueLabel.setForeground(Color.WHITE);
         valueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(valueLabel);
@@ -211,24 +190,14 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Metodo che crea un JLabel per rappresentare una carta.
-     * 
-     * <p>
-     * Questo metodo cerca l'immagine corrispondente alla carta nel percorso
-     * specificato, la ridimensiona per poter farla entrare nel JPanel del
-     * giocatore.
-     * </p>
-     * 
-     * @param card La carta da rappresentare.
-     * @return Un JLabel contenente l'immagine ridimensionata della carta.
-     *         Se l'immagine non viene trovata, ritorna un JLabel con una frase di
-     *         errore.
+     * Creates the card label.
+     * @param card the card
+     * @return the operation result
      */
     private JLabel createCardLabel(Card card) {
-        String imagePath = "src/main/resources/images/cards/" + card.getImageFileName();
-        java.io.File imageFile = new java.io.File(imagePath);
-        if (imageFile.exists()) {
-            ImageIcon originalIcon = new ImageIcon(imagePath);
+        java.net.URL imageUrl = getClass().getResource("/images/cards/" + card.getImageFileName());
+        if (imageUrl != null) {
+            ImageIcon originalIcon = new ImageIcon(imageUrl);
             Image scaledImage = originalIcon.getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
             return new JLabel(scaledIcon);
@@ -238,9 +207,8 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Metodo che aggiorna lo stato dei pulsanti di gioco.
-     *
-     * @param enable true per abilitare i pulsanti, false per disabilitarli.
+     * Updates the buttons.
+     * @param enable the enable
      */
     private void updateButtons(boolean enable) {
         hitButton.setEnabled(enable);
@@ -248,20 +216,27 @@ public class BlackjackView extends JFrame implements Observer {
     }
 
     /**
-     * Getter che restituisce il pulsante "Pesca Carta".
-     *
-     * @return Il JButton per l'azione "Pesca Carta".
+     * Returns the hit button.
+     * @return the hit button
      */
     public JButton getHitButton() {
         return hitButton;
     }
 
     /**
-     * Getter che restituisce il pulsante "Stai".
-     *
-     * @return Il JButton per l'azione "Stai".
+     * Returns the stand button.
+     * @return the stand button
      */
     public JButton getStandButton() {
         return standButton;
+    }
+
+    /**
+     * Returns the button used to restart the round.
+     *
+     * @return the restart button
+     */
+    public JButton getRestartButton() {
+        return restartButton;
     }
 }

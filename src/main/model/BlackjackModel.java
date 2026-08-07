@@ -1,45 +1,25 @@
 package main.model;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Observable;
+import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.IntStream;
 
 /**
- * La classe BlackjackModel implementa la logica del gioco.
- * 
- * <p>
- * Pattern utlizzati:
- * - MVC (Model-View-Controller): come parte del Model per gestire i giocatori
- * in partita, il mazzo di carte e lo stato della partita stessa.
- * - Observer: consente alla View di essere notificata ogni volta che avviene un
- * cambiamento di stato;
- * </p>
- * 
- * <p>
- * La logica include il mescolamento e la distribuzione delle carte, le
- * azioni "Pesca Carta" e "Stai", la gestione dei turni dei giocatori e il
- * determinare a fine partita il vincitore.
- * </p>
+ * Represents the {@code BlackjackModel} class.
  */
-public class BlackjackModel extends Observable {
+public class BlackjackModel {
     private List<Player> players;
     private Deck deck;
     private int currentPlayerIndex;
     private UserProfile userProfile;
     private Player dealer;
+    private final List<GameListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
-     * Costruttore della classe BlackjackModel.
-     * 
-     * <p>
-     * Inizializza il giocatore umano, i bot, il Banco, il mazzo di carte e carica
-     * il profilo utente del giocatore umano per gestirne le statistiche.
-     * </p>
-     * 
-     * @param userProfile Il profilo utente del giocatore umano, compreso
-     *                    di tutte le sue informazioni.
+     * Creates a new {@code BlackjackModel} instance.
+     * @param userProfile the user profile
      */
     public BlackjackModel(UserProfile userProfile) {
         players = new ArrayList<>();
@@ -47,82 +27,62 @@ public class BlackjackModel extends Observable {
         players.add(new Player("MaxVerstappen", new BotStrategy(), false));
         players.add(new Player("KimiRaikkonen", new BotStrategy(), false));
         dealer = new Player("Banco", new DealerStrategy(), false);
-        deck = Deck.getInstance();
+        deck = new Deck();
         currentPlayerIndex = 0;
         this.userProfile = userProfile;
-        userProfile.loadProfile();
     }
 
     /**
-     * Metodo che avvia il gioco, mescola il mazzo di carte e distribuisce le
-     * due carte iniziali a tutti i giocatori.
+     * Starts the game.
      */
     public void startGame() {
-        deck.shuffle();
+        deck.reset();
         dealInitialCards();
-        setChanged();
-        notifyObservers();
+        fireEvent(GameEvent.STATE_CHANGED);
     }
 
     /**
-     * Metodo che distribuisce le carte iniziali ai giocatori e al Banco.
-     * 
-     * <p>
-     * Ogni giocatore riceve due carte all'inizio del gioco.
-     * </p>
+     * Deals two initial cards to every player and the dealer.
      */
     private void dealInitialCards() {
         IntStream.range(0, 2).forEach(i -> {
             players.forEach(player -> player.addCard(deck.drawCard()));
             dealer.addCard(deck.drawCard());
         });
-        setChanged();
-        notifyObservers();
     }
 
     /**
-     * Metodo che esegue l'azione "Pesca Carta" per il giocatore corrente,
-     * aggiungendo una nuova carta alla sua mano.
-     * 
-     * <p>
-     * Se il giocatore sballa (ovvero supera il valore di 21), il metodo
-     * restituisce true, altrimenti false.
-     * </p>
-     * 
-     * @return true se il giocatore ha sballato, altrimenti false.
+     * Handles the hit action.
+     * @return the operation result
      */
     public boolean hit() {
+        ensureActivePlayer();
         Player currentPlayer = players.get(currentPlayerIndex);
         currentPlayer.addCard(deck.drawCard());
-        setChanged();
-        notifyObservers();
+        fireEvent(GameEvent.STATE_CHANGED);
         return currentPlayer.getHandValue() > 21;
     }
 
     /**
-     * Metodo che esegue l'azione "Stai" per il giocatore corrente,
-     * terminando il suo turno e passando al giocatore successivo.
+     * Handles the stand action.
      */
     public void stand() {
+        ensureActivePlayer();
         currentPlayerIndex++;
-        setChanged();
-        notifyObservers();
+        fireEvent(GameEvent.STATE_CHANGED);
     }
 
     /**
-     * Metodo che verifica se è il turno del giocatore umano.
-     * 
-     * @return true se è il turno del giocatore umano, altrimenti false.
+     * Returns whether human turn.
+     * @return whether human turn
      */
     public boolean isHumanTurn() {
         return currentPlayerIndex == 0;
     }
 
     /**
-     * Metodo che determina se il bot corrente voglia eseguire l'azione
-     * "Pesca Carta".
-     * 
-     * @return true se il bot vuole pescare una carta, altrimenti false.
+     * Returns whether the current bot should hit.
+     * @return whether the player should hit
      */
     public boolean botWantsToHit() {
         Player currentPlayer = players.get(currentPlayerIndex);
@@ -130,23 +90,17 @@ public class BlackjackModel extends Observable {
     }
 
     /**
-     * Metodo che termina il round, esegue il turno del Banco
-     * e determina il vincitore.
-     * Salva il profilo utente del giocatore umano e notifica gli
-     * Observer che la partita è terminata tramite il segnale "GAME_OVER".
+     * Ends the round, evaluates its result, and saves the profile.
      */
     public void endRound() {
         playDealerTurn();
         determineWinner();
         userProfile.saveProfile();
-        setChanged();
-        notifyObservers("GAME_OVER");
+        fireEvent(GameEvent.GAME_OVER);
     }
 
     /**
-     * Metodo che esegue il turno del Banco.
-     * Il Banco continua a pescare carte finché non decide
-     * di fermarsi o sballa (ossia che supera 21).
+     * Plays the dealer turn.
      */
     private void playDealerTurn() {
         while (dealer.wantsToHit()) {
@@ -158,10 +112,7 @@ public class BlackjackModel extends Observable {
     }
 
     /**
-     * Metodo che determina il vincitore del round confrontando il valore
-     * della mano del giocatore umano e del Banco.
-     * Aggiorna le statistiche del profilo giocatore
-     * in base al risultato della partita.
+     * Calculates the winner.
      */
     private void determineWinner() {
         Player humanPlayer = players.get(0);
@@ -181,35 +132,28 @@ public class BlackjackModel extends Observable {
     }
 
     /**
-     * Metodo che ripristina il round corrente,
-     * ripristinando le mani dei giocatori e del Banco.
-     * Mescola il mazzo e distribuisce nuove carte.
+     * Resets the round.
      */
     public void resetRound() {
         players.forEach(Player::clearHand);
         dealer.clearHand();
         currentPlayerIndex = 0;
-        deck = Deck.getInstance();
-        deck.shuffle();
+        deck.reset();
         dealInitialCards();
-        setChanged();
-        notifyObservers();
+        fireEvent(GameEvent.STATE_CHANGED);
     }
 
     /**
-     * Metodo che verifica se il gioco è terminato.
-     * 
-     * @return true se tutti i giocatori hanno completato il loro turno,
-     *         altrimenti false.
+     * Returns whether game over.
+     * @return whether game over
      */
     public boolean isGameOver() {
         return currentPlayerIndex >= players.size();
     }
 
     /**
-     * Metodo che verifica se è il turno di un bot o del Banco.
-     * 
-     * @return true se è il turno di un bot o del Banco, altrimenti false.
+     * Returns whether bot or dealer turn.
+     * @return whether bot or dealer turn
      */
     public boolean isBotOrDealerTurn() {
         if (currentPlayerIndex < 0 || currentPlayerIndex >= players.size()) {
@@ -220,63 +164,74 @@ public class BlackjackModel extends Observable {
     }
 
     /**
-     * Getter che restituisce la lista dei giocatori in gioco.
-     * 
-     * @return una lista di oggetti {@link Player}.
+     * Returns the players.
+     * @return the players
      */
     public List<Player> getPlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
     /**
-     * Getter che restituisce il Banco.
-     * 
-     * @return l'oggetto {@link Player} che rappresenta il Banco.
+     * Returns the dealer.
+     * @return the dealer
      */
     public Player getDealer() {
         return dealer;
     }
 
     /**
-     * Getter che restituisce il profilo utente del giocatore umano.
-     * 
-     * @return il profilo utente del giocatore umano {@link UserProfile}.
+     * Returns the user profile.
+     * @return the user profile
      */
     public UserProfile getUserProfile() {
         return userProfile;
     }
 
     /**
-     * Getter che restituisce l'indice del giocatore corrente.
-     * 
-     * @return l'indice del giocatore corrente.
+     * Returns the current player index.
+     * @return the current player index
      */
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
 
     /**
-     * Metodo che restituisce un messaggio che indica il vincitore della mano.
-     * 
-     * @return una stringa che rappresenta il messaggio del vincitore.
+     * Returns the winner message.
+     * @return the winner message
      */
     public String getWinnerMessage() {
-        if (dealer.getHandValue() > 21) {
-            return "Il Banco ha sballato. Tutti vincono, a meno di aver superato 21.";
-        } else {
-            // Filtra solo i giocatori che non hanno sballato e
-            // confrontali anche con il Banco
-            Player winner = players.stream()
-                    .filter(p -> p.getHandValue() <= 21)
-                    .max(Comparator.comparingInt(Player::getHandValue))
-                    .orElse(dealer);
+        int human = players.get(0).getHandValue();
+        int bank = dealer.getHandValue();
+        if (human > 21) return "Hai sballato: il Banco vince.";
+        if (bank > 21) return "Il Banco ha sballato: hai vinto!";
+        if (human > bank) return "Hai vinto " + human + " a " + bank + "!";
+        if (human < bank) return "Il Banco vince " + bank + " a " + human + ".";
+        return "Pareggio a " + human + ": la puntata è salva.";
+    }
 
-            // Confronta il valore della mano del Banco con quello del vincitore
-            if (dealer.getHandValue() >= winner.getHandValue()) {
-                return "Il Banco ha vinto la partita!";
-            } else {
-                return winner.getName() + " ha vinto la partita!";
-            }
-        }
+    /**
+     * Registers a listener for model changes.
+     *
+     * @param listener the listener to register
+     */
+    public void addGameListener(GameListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Unregisters a previously registered game listener.
+     *
+     * @param listener the listener to remove
+     */
+    public void removeGameListener(GameListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void fireEvent(GameEvent event) {
+        listeners.forEach(listener -> listener.gameChanged(this, event));
+    }
+
+    private void ensureActivePlayer() {
+        if (isGameOver()) throw new IllegalStateException("Il round è già terminato");
     }
 }

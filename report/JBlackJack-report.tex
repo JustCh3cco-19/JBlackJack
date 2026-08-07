@@ -1,0 +1,343 @@
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\geometry{top=2.5cm,bottom=2.5cm,left=2.8cm,right=2.8cm}
+\graphicspath{{../UML/}}
+\definecolor{bjgreen}{HTML}{0B6B4F}
+\definecolor{bjdark}{HTML}{173B33}
+\definecolor{codegray}{HTML}{F3F5F4}
+\hypersetup{colorlinks=true,linkcolor=bjgreen,urlcolor=bjgreen,
+  pdftitle={JBlackJack Technical Report},pdfauthor={Francesco Zompanti}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{JBlackJack}
+\fancyhead[R]{Technical Report}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\setlist[itemize]{noitemsep,topsep=4pt}
+\setlist[enumerate]{noitemsep,topsep=4pt}
+\renewcommand{\arraystretch}{1.15}
+\emergencystretch=2em
+
+\lstdefinestyle{java}{language=Java,backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,keywordstyle=\color{bjgreen}\bfseries,
+  commentstyle=\color{gray},stringstyle=\color{blue!55!black},numbers=left,
+  numberstyle=\scriptsize\color{gray},frame=single,rulecolor=\color{black!15},
+  breaklines=true,showstringspaces=false,tabsize=4}
+
+\newcommand{\code}[1]{\nolinkurl{#1}}
+\newcommand{\projectversion}{2.0.0-SNAPSHOT}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+  \centering
+  \vspace*{2.2cm}
+  {\color{bjdark}\rule{\textwidth}{1.2pt}}\\[1.1cm]
+  {\Huge\bfseries JBlackJack\\[0.35cm]}
+  {\LARGE Technical Project Report}
+  \\[0.8cm]
+  {\color{bjdark}\rule{\textwidth}{1.2pt}}
+  \\[2cm]
+  {\Large Francesco Zompanti}\\[0.3cm]
+  {\large Student ID: 2012601}\\[0.3cm]
+  {\large Course: Attendance M--Z}
+  \vfill
+  \begin{tabular}{rl}
+    \textbf{Software version:} & \projectversion \\
+    \textbf{Technologies:} & Java 17, Swing, Maven, JUnit 5 \\
+    \textbf{Report date:} & \today
+  \end{tabular}
+  \vspace*{1.4cm}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\chapter{Introduction}
+
+JBlackJack is a desktop application that simulates a Blackjack game between one
+human player, two automated opponents, and the dealer. It is written in Java 17 and
+uses Swing for its graphical user interface. In addition to the game rules, it provides
+local player profiles, persistent statistics, a progression system, and optional image
+and audio resources.
+
+The main design goal is a clear separation between rules, presentation, and
+coordination. The code follows Model--View--Controller (MVC) and also applies the
+Strategy, Factory Method, Observer/Listener, and Singleton patterns. A Maven build and
+JUnit tests make the implementation reproducible and verifiable.
+
+\section{Main features}
+
+\begin{itemize}
+  \item a standard 52-card deck and the core rules of Blackjack;
+  \item \emph{Hit} and \emph{Stand} actions, automated opponents, and dealer turns;
+  \item correct handling of aces as either 1 or 11 to prevent a bust;
+  \item a hidden dealer hole card until the end of the round;
+  \item validated local profiles with statistics and experience points;
+  \item a responsive Swing interface updated on the Event Dispatch Thread;
+  \item graceful fallback when optional images or audio files are unavailable;
+  \item automated tests for domain rules and profile persistence.
+\end{itemize}
+
+\chapter{Requirements and Game Rules}
+
+\section{Functional requirements}
+
+\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+FR-01 & The user can create or load a profile using a nickname. \\
+FR-02 & The system deals two initial cards to every participant and the dealer. \\
+FR-03 & During their turn, users can hit or stand. \\
+FR-04 & Bots and the dealer choose their actions through replaceable strategies. \\
+FR-05 & At the end of a round, the system determines the result against the dealer. \\
+FR-06 & Played, won, and lost games and experience points are stored persistently. \\
+FR-07 & Users can review their statistics and start another round. \\
+\bottomrule
+\end{tabularx}
+
+\section{Implemented rules}
+
+Number cards have their rank value, face cards are worth 10, and an ace initially
+counts as 11. If a total exceeds 21, each ace can be reduced from 11 to 1 by
+subtracting 10 until the hand is valid or no aces remain. A value above 21 is a bust.
+The dealer and bots hit below 17 and stand on 17 or more. The user wins by holding a
+valid hand higher than the dealer's, or when the dealer busts. A tie changes neither
+wins nor losses but still counts as a played game.
+
+\chapter{Software Architecture}
+
+\section{Package structure}
+
+\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+\textbf{Package} & \textbf{Responsibility} \\
+\midrule
+\code{main.blackjack} & application entry point and GUI startup on the EDT; \\
+\code{main.model} & cards, deck, players, strategies, game state, profiles, and events; \\
+\code{main.controller} & translation of GUI input into model operations; \\
+\code{main.view} & Swing windows for profiles, menus, statistics, and the game table; \\
+\code{main.util} & optional cross-cutting services, particularly audio playback. \\
+\bottomrule
+\end{tabularx}
+
+\section{Model--View--Controller}
+
+The \textbf{Model} owns state and enforces rules without depending on Swing. The
+\textbf{View} presents that state and exposes interaction controls. The
+\textbf{Controller} connects buttons to model operations, schedules automated turns,
+and activates audio feedback.
+
+The model emits typed events through \code{GameListener}. The game view registers as
+a listener and reacts to \code{STATE_CHANGED} and \code{GAME_OVER}. Consequently,
+the model has no knowledge of Swing components and can be tested independently.
+
+\section{UML diagram}
+
+Figure~\ref{fig:uml} provides an overview of the main classes and relationships. The
+diagram is maintained as a separate project artifact in the \code{UML/} directory and
+is included automatically when this report is built.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{JBlackJack.png}
+  \caption{JBlackJack UML class diagram.}
+  \label{fig:uml}
+\end{figure}
+
+\chapter{Domain Model}
+
+\section{Cards and factory}
+
+The \code{Card} interface defines a card's value, suit, and rank. Its default
+\code{getImageFileName()} method establishes the naming convention for image assets.
+The concrete implementations are \code{NumericCard} for ranks 2 through 10,
+\code{FaceCard} for jack, queen, and king, and \code{AceCard} for aces.
+
+\code{CardFactory.createCard(suit, rank)} centralizes construction and validates both
+arguments. Unknown suits, out-of-range numbers, and invalid ranks cause an
+\code{IllegalArgumentException}, preventing inconsistent cards from entering a deck.
+
+\section{Deck}
+
+\code{Deck} generates the Cartesian product of four suits and thirteen ranks with
+Streams, producing 52 cards. Each game owns an independent deck instance. The
+\code{reset()} method rebuilds and shuffles it, while \code{drawCard()} removes one
+card and recreates the deck if it is empty. Avoiding global deck state reduces coupling
+between games and simplifies testing.
+
+\section{Players and Strategy}
+
+\code{Player} aggregates a name, hand, human-player flag, and
+\code{PlayerStrategy}. The hand accessor returns an unmodifiable view, so cards can
+only be changed through the domain API. Hand scoring sums all values and progressively
+reduces aces while the total exceeds 21.
+
+The decision to hit is delegated to \code{PlayerStrategy} implementations:
+\code{BotStrategy}, \code{DealerStrategy}, and \code{HumanPlayerStrategy}. Human
+input is handled by the controller, so the human strategy makes no automatic choice.
+
+\begin{lstlisting}[style=java,caption={Core algorithm for scoring flexible aces.}]
+int value = hand.stream().mapToInt(Card::getValue).sum();
+long aces = hand.stream()
+                .filter(card -> "ace".equals(card.getRank()))
+                .count();
+while (value > 21 && aces-- > 0) {
+    value -= 10;
+}
+return value;
+\end{lstlisting}
+
+\section{Game state and events}
+
+\code{BlackjackModel} owns three players, the dealer, deck, user profile, and current
+turn index. A round resets and shuffles the deck, deals two cards to every participant,
+runs the human and automated turns, plays the dealer's hand, evaluates the result,
+updates and saves the profile, and finally emits \code{GAME_OVER}.
+
+Collections exposed by the model are unmodifiable. Listeners are stored in a
+\code{CopyOnWriteArrayList}, allowing safe iteration even if registrations change
+during event delivery.
+
+\chapter{User Interface and Control Flow}
+
+\section{Startup and navigation}
+
+\code{JBlackJack.main()} calls \code{SwingUtilities.invokeLater}, ensuring that all
+component creation takes place on the Event Dispatch Thread. Navigation begins with
+\code{ProfileCreationView}, continues to \code{MainMenuView}, and then opens either
+\code{StatisticsView} or a game in \code{BlackjackView}.
+
+Profile nicknames contain between 1 and 24 Unicode letters, digits, hyphens, or
+underscores. This improves both usability and the safety of filenames used for local
+storage.
+
+\section{Game table}
+
+\code{BlackjackView} implements \code{GameListener}. On each event it refreshes the
+dealer and player areas, changes the status text, and enables controls only during the
+human turn. The dealer's second card remains hidden until the round is complete.
+
+Images are loaded from the classpath. If an expected card or avatar asset is missing,
+the GUI uses a textual fallback and remains fully usable.
+
+\section{Controller and timing}
+
+\code{BlackjackController} registers the buttons' action listeners. After \emph{Hit},
+it checks for a bust; after \emph{Stand}, it advances to the next player. Bot turns are
+scheduled with a \code{javax.swing.Timer}, keeping all updates on the EDT without
+blocking the window. Once all players finish, the controller asks the model to play the
+dealer and close the round.
+
+\section{Optional audio}
+
+\code{AudioManager} is a stateless Singleton that loads WAV clips from the classpath
+through the public \code{javax.sound.sampled} API. It closes clips after playback and
+handles missing or invalid resources without interrupting the game. Audio feedback is
+therefore optional rather than an application dependency.
+
+\chapter{Profile Persistence}
+
+\code{UserProfile} stores the nickname, avatar, games played, wins, losses, level, and
+experience. Each win awards 100 points. The first level requires 1,000 points and the
+threshold grows with the current level.
+
+Data is written to \code{profiles/<nickname>_profilo.txt}. Saving first creates a
+temporary file and then uses an atomic move when supported by the filesystem. This
+prevents a partially written profile after an interruption. Loading validates the field
+count and numeric formats; missing or malformed data leaves default values unchanged
+and returns a failure result that the caller can handle.
+
+Nickname validation blocks path components such as \code{../}, preventing the
+constructed path from escaping the profile directory. Tests can inject a temporary
+directory into the profile constructor and remain isolated from real user data.
+
+\chapter{Build, Execution, and Testing}
+
+\section{Application build}
+
+The application requires JDK 17 or newer and Maven 3.9 or newer. From the repository
+root, it can be tested and started with:
+
+\begin{verbatim}
+mvn clean test
+mvn exec:java
+\end{verbatim}
+
+The recommended pre-release command is \code{mvn verify}. The \code{pom.xml} file
+configures the historical \code{src/main} source directory, Java 17 compilation, JUnit
+Jupiter, and the execution plugin with \code{main.blackjack.JBlackJack} as main class.
+
+\section{Automated tests}
+
+\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+\textbf{Test class} & \textbf{Verified behavior} \\
+\midrule
+\code{CardFactoryTest} & valid construction and rejection of invalid suits or ranks; \\
+\code{PlayerTest} & single and multiple aces and immutability of the exposed hand; \\
+\code{StrategyTest} & dealer decisions for soft hands containing an ace; \\
+\code{UserProfileTest} & round-trip storage, malformed input, safe paths, and levels. \\
+\bottomrule
+\end{tabularx}
+
+Persistence tests use \code{@TempDir}, so each run receives an empty directory and
+does not modify \code{profiles/}. The repository's GitHub Actions workflow can run the
+same verification in a clean environment.
+
+\section{Building this report}
+
+This report has a dedicated source file and is independent from the Java build. A
+LaTeX distribution containing \code{pdflatex} is sufficient:
+
+\begin{verbatim}
+make -C report
+\end{verbatim}
+
+The generated document is \code{report/build/JBlackJack-report.pdf}. The
+\code{clean} target removes auxiliary files, while \code{distclean} also removes the
+PDF. Running \code{pdflatex} twice resolves the table of contents and cross-references.
+
+\chapter{Design Assessment and Future Work}
+
+The central design choices are MVC separation, encapsulated collections, typed events,
+and graceful handling of optional assets. Factory Method makes card validation explicit;
+Strategy isolates game policies; atomic persistence protects local data; correct EDT use
+keeps Swing responsive; and Maven with JUnit provides a repeatable regression baseline.
+
+Possible extensions include betting and chips, split and double-down actions,
+configurable bot strategies, controller-level automated tests, and versioned structured
+profile storage. Generating the UML diagram directly from source during continuous
+integration would also keep it synchronized automatically.
+
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+JBlackJack implements a complete desktop card game with a clear and modular structure.
+The core rules remain independent from presentation, automated behaviors are
+replaceable, and statistics persist between sessions. Validation, unmodifiable views,
+atomic writes, correct Event Dispatch Thread usage, and JUnit tests provide a robust
+foundation for future development without sacrificing the simplicity of the current
+implementation.
+
+\end{document}

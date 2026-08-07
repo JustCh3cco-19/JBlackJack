@@ -1,31 +1,19 @@
 package main.model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
- * La classe UserProfile rappresenta il profilo del giocatore.
- * 
- * <p>
- * Questa classe gestisce le informazioni dell'utente, le statistiche di gioco e
- * i punti esperienza.
- * </p>
- * 
- * <p>
- * Pattern utilizzati:
- * - Domain Model: rappresenta l'utente e gestisce la logica legata alle
- * sue statistiche e progressi nel gioco;
- * - Serialization: serializzazione all'interno di un file txt per
- * salvare l'oggetto in questione;
- * - Deserialization: deserializzazione per caricare lo stato di un
- * oggetto da un file txt.
- * </p>
+ * Represents the {@code UserProfile} class.
  */
 public class UserProfile {
+    private static final Pattern VALID_NICKNAME = Pattern.compile("[\\p{L}\\p{N}_-]{1,24}");
+    private final Path profilesDirectory;
     private String nickname;
     private String avatarPath;
     private int gamesPlayed;
@@ -35,15 +23,19 @@ public class UserProfile {
     private int experience;
 
     /**
-     * Costruttore che modella un nuovo profilo utente con il nickname e
-     * il percorso dell'avatar scelti dal giocatore.
-     *
-     * @param nickname   Il nickname dell'utente.
-     * @param avatarPath Il percorso dell'immagine avatar dell'utente.
+     * Creates a new {@code UserProfile} instance.
+     * @param nickname the nickname
+     * @param avatarPath the avatar path
      */
     public UserProfile(String nickname, String avatarPath) {
+        this(nickname, avatarPath, Path.of("profiles"));
+    }
+
+    UserProfile(String nickname, String avatarPath, Path profilesDirectory) {
+        validateNickname(nickname);
+        this.profilesDirectory = profilesDirectory;
         this.nickname = nickname;
-        this.avatarPath = avatarPath;
+        this.avatarPath = avatarPath == null ? "" : avatarPath;
         this.gamesPlayed = 0;
         this.gamesWon = 0;
         this.gamesLost = 0;
@@ -52,15 +44,14 @@ public class UserProfile {
     }
 
     /**
-     * Metodo che incrementa il numero di partite giocate dall'utente.
+     * Increments the games played.
      */
     public void incrementGamesPlayed() {
         this.gamesPlayed++;
     }
 
     /**
-     * Metodo che incrementa il numero di partite vinte dall'utente e
-     * aggiunge punti esperienza se il giocatore umano dovesse vincere.
+     * Increments the games won.
      */
     public void incrementGamesWon() {
         this.gamesWon++;
@@ -68,17 +59,15 @@ public class UserProfile {
     }
 
     /**
-     * Metodo che incrementa il numero di partite perse dall'utente.
+     * Increments the games lost.
      */
     public void incrementGamesLost() {
         this.gamesLost++;
     }
 
     /**
-     * Metodo che aggiunge punti esperienza al profilo dell'utente e
-     * controlla se è necessario salire di livello.
-     *
-     * @param exp La quantità di punti esperienza da aggiungere.
+     * Adds the experience.
+     * @param exp the exp
      */
     private void addExperience(int exp) {
         this.experience += exp;
@@ -88,125 +77,149 @@ public class UserProfile {
     }
 
     /**
-     * Metodo che aumenta il livello dell'utente.
+     * Performs the {@code levelUp} operation.
      */
     private void levelUp() {
         this.level++;
     }
 
     /**
-     * Metodo che calcola l'esperienza necessaria per il prossimo livello.
-     *
-     * @return La quantità di esperienza necessaria per il prossimo livello.
+     * Performs the {@code experienceNeededForNextLevel} operation.
+     * @return the operation result
      */
     private int experienceNeededForNextLevel() {
-        return this.level * 1000;
+        return (this.level + 1) * 1000;
     }
 
     /**
-     * Metodo che salva il profilo utente in un file di testo
-     * nella cartella "profiles".
-     * Il nome del file è basato sul nickname scelto dell'utente.
-     * 
+     * Saves the profile.
+     * @return the operation result
      */
-    public void saveProfile() {
-        File profilesDir = new File("profiles");
-        if (!profilesDir.exists()) {
-            profilesDir.mkdirs();
-        }
-
-        String filePath = "profiles" + File.separator + nickname + "_profilo.txt";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(nickname + "\n");
-            writer.write(avatarPath + "\n");
-            writer.write(gamesPlayed + "\n");
-            writer.write(gamesWon + "\n");
-            writer.write(gamesLost + "\n");
-            writer.write(level + "\n");
-            writer.write(experience + "\n");
+    public boolean saveProfile() {
+        try {
+            Files.createDirectories(profilesDirectory);
+            Path destination = profilePath();
+            Path temporary = Files.createTempFile(profilesDirectory, nickname, ".tmp");
+            Files.write(temporary, List.of(nickname, avatarPath, Integer.toString(gamesPlayed),
+                    Integer.toString(gamesWon), Integer.toString(gamesLost), Integer.toString(level),
+                    Integer.toString(experience)), StandardCharsets.UTF_8);
+            try {
+                Files.move(temporary, destination, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (java.nio.file.AtomicMoveNotSupportedException e) {
+                Files.move(temporary, destination, StandardCopyOption.REPLACE_EXISTING);
+            }
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
     }
 
     /**
-     * Metodo che carica il profilo utente da un file di testo
-     * nella cartella "profiles".
-     * Il nome del file è basato sul nickname dell'utente.
+     * Loads the profile.
+     * @return the operation result
      */
-    public void loadProfile() {
-        String filePath = "profiles" + File.separator + nickname + "_profilo.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            this.nickname = reader.readLine();
-            this.avatarPath = reader.readLine();
-            this.gamesPlayed = Integer.parseInt(reader.readLine());
-            this.gamesWon = Integer.parseInt(reader.readLine());
-            this.gamesLost = Integer.parseInt(reader.readLine());
-            this.level = Integer.parseInt(reader.readLine());
-            this.experience = Integer.parseInt(reader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public boolean loadProfile() {
+        Path path = profilePath();
+        if (!Files.isRegularFile(path)) return false;
+        try {
+            List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+            if (lines.size() != 7 || !nickname.equals(lines.get(0))) return false;
+            int loadedPlayed = nonNegative(lines.get(2));
+            int loadedWon = nonNegative(lines.get(3));
+            int loadedLost = nonNegative(lines.get(4));
+            int loadedLevel = nonNegative(lines.get(5));
+            int loadedExperience = nonNegative(lines.get(6));
+            if (loadedWon + loadedLost > loadedPlayed) return false;
+            avatarPath = lines.get(1);
+            gamesPlayed = loadedPlayed;
+            gamesWon = loadedWon;
+            gamesLost = loadedLost;
+            level = loadedLevel;
+            experience = loadedExperience;
+            return true;
+        } catch (IOException | NumberFormatException e) {
+            return false;
         }
     }
 
+    private Path profilePath() {
+        return profilesDirectory.resolve(nickname + "_profilo.txt");
+    }
+
+    private static int nonNegative(String value) {
+        int parsed = Integer.parseInt(value);
+        if (parsed < 0) throw new NumberFormatException("negative value");
+        return parsed;
+    }
+
     /**
-     * Getter che restituisce il nickname dell'utente.
+     * Checks whether a nickname is safe and valid for profile storage.
      *
-     * @return Il nickname dell'utente.
+     * @param nickname the nickname to validate
+     * @return whether the nickname is valid
+     */
+    public static boolean isValidNickname(String nickname) {
+        return nickname != null && VALID_NICKNAME.matcher(nickname.trim()).matches();
+    }
+
+    private static void validateNickname(String nickname) {
+        if (!isValidNickname(nickname)) {
+            throw new IllegalArgumentException("Il nickname deve contenere 1-24 lettere, numeri, _ o -");
+        }
+    }
+
+    /**
+     * Returns the nickname.
+     * @return the nickname
      */
     public String getNickname() {
         return nickname;
     }
 
     /**
-     * Getter che restituisce il percorso dell'immagine avatar dell'utente.
-     *
-     * @return Il percorso dell'immagine avatar.
+     * Returns the avatar path.
+     * @return the avatar path
      */
     public String getAvatarPath() {
         return avatarPath;
     }
 
     /**
-     * Getter che restituisce il numero di partite giocate dall'utente.
-     *
-     * @return Il numero di partite giocate.
+     * Returns the games played.
+     * @return the games played
      */
     public int getGamesPlayed() {
         return gamesPlayed;
     }
 
     /**
-     * Getter che restituisce il numero di partite vinte dall'utente.
-     *
-     * @return Il numero di partite vinte.
+     * Returns the games won.
+     * @return the games won
      */
     public int getGamesWon() {
         return gamesWon;
     }
 
     /**
-     * Getter che restituisce il numero di partite perse dall'utente.
-     *
-     * @return Il numero di partite perse.
+     * Returns the games lost.
+     * @return the games lost
      */
     public int getGamesLost() {
         return gamesLost;
     }
 
     /**
-     * Getter che restituisce il livello dell'utente.
-     *
-     * @return Il livello dell'utente.
+     * Returns the level.
+     * @return the level
      */
     public int getLevel() {
         return level;
     }
 
     /**
-     * Getter che restituisce i punti esperienza dell'utente.
-     *
-     * @return I punti esperienza dell'utente.
+     * Returns the experience.
+     * @return the experience
      */
     public int getExperience() {
         return experience;
