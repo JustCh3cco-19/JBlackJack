@@ -13,6 +13,8 @@ target/
 out/
 /UML/
 /javadoc/
+/report/build/
+/report/*.pdf
 
 *.classpath
 
