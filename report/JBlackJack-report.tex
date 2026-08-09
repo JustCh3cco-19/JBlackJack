@@ -155,8 +155,8 @@ the model has no knowledge of Swing components and can be tested independently.
 \section{UML diagram}
 
 Figure~\ref{fig:uml} provides an overview of the main classes and relationships. The
-diagram is maintained as a separate project artifact in the \code{UML/} directory and
-is included automatically when this report is built.
+diagram is generated from the Java source code during continuous integration, stored
+in the \code{UML/} directory, and included automatically when this report is built.
 
 \begin{figure}[htbp]
   \centering
@@ -327,8 +327,8 @@ keeps Swing responsive; and Maven with JUnit provides a repeatable regression ba
 
 Possible extensions include betting and chips, split and double-down actions,
 configurable bot strategies, controller-level automated tests, and versioned structured
-profile storage. Generating the UML diagram directly from source during continuous
-integration would also keep it synchronized automatically.
+profile storage. The continuous integration pipeline regenerates the UML diagram from
+the sources so that the released documentation remains synchronized automatically.
 
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}

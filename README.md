@@ -62,7 +62,8 @@ src/test/java         automated tests
 ```
 
 Profiles are saved locally in the `profiles/` directory and are not tracked by
-Git. Project documentation is available in `javadoc/`, `UML/`, and `report/`.
+Git. Generated Javadoc, UML diagrams, and the compiled report are distributed
+with each GitHub Release instead of being committed to the repository.
 
 ## Technical report
 
@@ -77,8 +78,24 @@ The generated PDF is written to `report/build/JBlackJack-report.pdf`.
 Use `make -C report clean` to remove auxiliary LaTeX files or
 `make -C report distclean` to remove the generated PDF as well.
 
-The report currently includes the existing `UML/JBlackJack.png` diagram; the
-diagram is not regenerated automatically from the Java source code.
+The CI workflow regenerates `UML/JBlackJack.puml` and `UML/JBlackJack.png`
+directly from the Java sources before compiling the report. These generated
+files are ignored by Git and published as release assets.
+
+## Automated releases
+
+Every push to `main` runs the tests, packages the application, generates the
+Javadoc and UML diagram, and compiles the report. The workflow then creates the
+tag and GitHub Release `v<version>` from the Maven version (with `-SNAPSHOT`
+removed). If that release already exists, it is left unchanged and no duplicate
+is created.
+
+To publish a different version without changing `pom.xml`, open **Actions →
+Build documentation and release → Run workflow** and enter a version such as
+`2.1.0`. Each release contains the application JAR, the generated Javadoc ZIP,
+the PDF report, and both the PNG and PlantUML versions of the generated diagram.
+The repository must allow GitHub Actions read/write workflow permissions so that
+`GITHUB_TOKEN` can create tags and releases.
 
 ## Development
 

@@ -11,6 +11,8 @@
 bin/
 target/
 out/
+/UML/
+/javadoc/
 
 *.classpath
 

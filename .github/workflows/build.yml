@@ -1,17 +1,140 @@
-name: build
+name: Build documentation and release
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (for example 2.1.0); defaults to pom.xml"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
           cache: maven
-      - run: mvn --batch-mode verify
+
+      - name: Resolve release version
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        shell: bash
+        run: |
+          version="${REQUESTED_VERSION#v}"
+          if [[ -z "$version" ]]; then
+            version="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+            version="${version%-SNAPSHOT}"
+          fi
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release version: $version" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Test and package application
+        run: mvn --batch-mode clean verify
+
+      - name: Generate Javadoc from Java sources
+        run: |
+          javadoc \
+            -d target/apidocs \
+            -encoding UTF-8 \
+            -charset UTF-8 \
+            -docencoding UTF-8 \
+            -sourcepath src \
+            -subpackages main
+
+      - name: Install UML and LaTeX tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            graphviz \
+            lmodern \
+            plantuml \
+            texlive-fonts-recommended \
+            texlive-latex-extra \
+            texlive-latex-recommended
+
+      - name: Generate UML from Java sources
+        run: |
+          python3 .github/scripts/generate-uml.py src/main UML/JBlackJack.puml
+          plantuml -failfast2 -tpng UML/JBlackJack.puml
+
+      - name: Generate project report
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          sed -i "s/\\\\newcommand{\\\\projectversion}{[^}]*}/\\\\newcommand{\\\\projectversion}{$RELEASE_VERSION}/" report/JBlackJack-report.tex
+          make -C report
+
+      - name: Stage release files
+        run: |
+          mkdir -p release
+          cp target/jblackjack-*.jar release/JBlackJack.jar
+          cp report/build/JBlackJack-report.pdf release/JBlackJack-report.pdf
+          cp UML/JBlackJack.png release/JBlackJack-UML.png
+          cp UML/JBlackJack.puml release/JBlackJack-UML.puml
+          jar --create --file release/JBlackJack-Javadoc.zip -C target/apidocs .
+
+      - name: Upload generated artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: JBlackJack-${{ steps.version.outputs.version }}
+          path: release/
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download release files
+        uses: actions/download-artifact@v4
+        with:
+          name: JBlackJack-${{ needs.build.outputs.version }}
+          path: release
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.build.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists: no duplicate will be created."
+            exit 0
+          fi
+          gh release create "$TAG" release/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "JBlackJack $TAG" \
+            --generate-notes
